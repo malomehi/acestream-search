@@ -1,5 +1,4 @@
 bs4
 python-dateutil
 requests
-setuptools-git-versioning
 tabulate
