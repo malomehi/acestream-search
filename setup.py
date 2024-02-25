@@ -1,14 +1,14 @@
 from setuptools import setup
 
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
 setup(
     name='acestream-search',
-    version='0.0.1',
-    install_requires=[
-        'bs4',
-        'python-dateutil',
-        'requests',
-        'tabulate'
-    ],
+    install_requires=required,
+    setuptools_git_versioning={
+        'enabled': True,
+    },
     entry_points={
         'console_scripts': [
             'acestream-search = acestream_search.acestream_search:__main__',
