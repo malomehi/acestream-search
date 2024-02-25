@@ -1,10 +1,10 @@
-name: Bump version
+name: bump-version
 on:
   push:
-    branches:
-      - master
+    branches: [master]
 jobs:
   build:
+    needs: pre-commit
     permissions:
       contents: write
     runs-on: ubuntu-latest
