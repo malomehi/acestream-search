@@ -5,6 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='acestream-search',
+    setup_requires=['setuptools-git-versioning'],
     install_requires=required,
     setuptools_git_versioning={
         'enabled': True,
