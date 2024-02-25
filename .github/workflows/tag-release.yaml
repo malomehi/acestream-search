@@ -3,8 +3,10 @@ on:
   push:
     branches: [master]
 jobs:
+  call-pre-commit:
+    uses: ./.github/workflows/pre-commit.yaml
   build:
-    needs: pre-commit
+    needs: call-pre-commit
     permissions:
       contents: write
     runs-on: ubuntu-latest
