@@ -1,45 +1,16 @@
 name: bump-version
-on:
-  push:
-    branches: [master]
+on: [pull_request]
 jobs:
-  call-pre-commit:
-    uses: ./.github/workflows/pre-commit.yaml
-  build-linux-binaries:
+  build-windows-binaries:
     needs: call-pre-commit
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Package Linux application
-      uses: JackMcKew/pyinstaller-action-linux@python3.10
+    - name: Package Windows application
+      uses: JackMcKew/pyinstaller-action-windows@python3-10-pyinstaller-5-3
       with:
         path: acestream_search
     - uses: actions/upload-artifact@v4
       with:
-        name: acestream-search-linux
-        path: acestream_search/dist/linux
-  tag-and-release:
-    needs: [build-linux-binaries]
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Bump version and push tag
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@master
-        with:
-          name: acestream-search-linux
-          path: acestream_search/dist/linux
-      - run: cd acestream_search/dist/linux && chmod +x acestream-search && tar czvf "acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz" acestream-search
-      - name: Create a GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.tag_version.outputs.new_tag }}
-          name: Release ${{ steps.tag_version.outputs.new_tag }}
-          body: ${{ steps.tag_version.outputs.changelog }}
-          artifacts: 'acestream_search/dist/linux/acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz'
-          artifactErrorsFailBuild: true
+        name: acestream-search-windows
+        path: acestream_search/dist/windows
