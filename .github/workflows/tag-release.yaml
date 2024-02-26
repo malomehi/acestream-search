@@ -2,7 +2,6 @@ name: bump-version
 on: [pull_request]
 jobs:
   build-windows-binaries:
-    needs: call-pre-commit
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
