@@ -34,7 +34,7 @@ jobs:
         with:
           name: acestream-search-linux
           path: acestream_search/dist/linux
-      - run: cd acestream_search/dist/linux && chmod +x acestream-search && tar czvf acestream-search-linux.tar.gz acestream-search
+      - run: cd acestream_search/dist/linux && chmod +x acestream-search && tar czvf "acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz" acestream-search
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:

@@ -3,10 +3,12 @@ Simple script to find acestream links
 
 ## Install
 
-Just checkout this repository and run:
+Just run the following in your python virtual environment:
 ```
-pip install .
+pip install git+https://github.com/malomehi/acestream-search --upgrade
 ```
+
+Alternatively download the executable binary file from the [release page](https://github.com/malomehi/acestream-search/releases)
 
 ## Usage
 ```console
