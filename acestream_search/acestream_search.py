@@ -11,7 +11,7 @@ from dateutil.parser import parse as date_parse
 from tabulate import tabulate
 from urllib.parse import urlparse
 
-MAIN_URL = 'https://livetv763.me'
+MAIN_URL = 'https://livetv764.me'
 
 CATEGORIES = {
     'american_football': 27,
