@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['acestream_search.py'],
+    ['acestream_search/acestream_search_launcher.py'],
     pathex=[],
     binaries=[],
     datas=[],
