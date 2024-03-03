@@ -1,36 +1,30 @@
 name: bump-version
-on:
-  push:
-    branches: [master]
+on: push
 jobs:
   call-pre-commit:
     uses: ./.github/workflows/pre-commit.yaml
-  # build-linux-binary:
-  #   needs: call-pre-commit
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Package Linux application
-  #     uses: JackMcKew/pyinstaller-action-linux@python3.10
-  #     with:
-  #       path: acestream_search
-  #   - uses: actions/upload-artifact@v4
-  #     with:
-  #       name: acestream-search-linux
-  #       path: acestream_search/dist/linux
-  # build-windows-binary:
-  #   needs: call-pre-commit
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Package Windows application
-  #     uses: JackMcKew/pyinstaller-action-windows@python3-10-pyinstaller-5-3
-  #     with:
-  #       path: acestream_search
-  #   - uses: actions/upload-artifact@v4
-  #     with:
-  #       name: acestream-search-windows
-  #       path: acestream_search/dist/windows
+  build-linux-binary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Package acestream-search Linux application
+        uses: sayyid5416/pyinstaller@v1
+        with:
+          python_ver: '3.11'
+          spec: 'acestream_search.spec'
+          requirements: 'requirements.txt'
+          exe_path: 'dist/linux'
+          upload_exe_with_name: 'acestream-search-linux'
+  build-windows-binary:
+    runs-on: windows-latest
+    steps:
+      - name: Package acestream-search Windows application
+        uses: sayyid5416/pyinstaller@v1
+        with:
+          python_ver: '3.11'
+          spec: 'acestream_search.spec'
+          requirements: 'requirements.txt'
+          exe_path: 'dist/windows'
+          upload_exe_with_name: 'acestream-search-windows'
   # tag-and-release:
   #   needs: [build-linux-binary, build-windows-binary]
   #   permissions:
