@@ -1,6 +1,6 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
-with open('acestream_search/requirements.txt') as f:
+with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setup(
@@ -10,9 +10,10 @@ setup(
     setuptools_git_versioning={
         'enabled': True,
     },
+    packages=find_packages(),
     entry_points={
         'console_scripts': [
-            'acestream-search = acestream_search.acestream_search:__main__',
+            'acestream-search=acestream_search.acestream_search_launcher:main'
         ]
     }
 )

@@ -1,96 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import argparse
 import datetime
-import logging
 import re
 import requests
 
+from acestream_search import logger
+from acestream_search.common.constants import CATEGORIES, MAIN_URL
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as date_parse
 from tabulate import tabulate
 from urllib.parse import urlparse
-
-MAIN_URL = 'https://livetv765.me'
-
-CATEGORIES = {
-    'american_football': 27,
-    'athletics': 9,
-    'bandy': 11,
-    'baseball': 19,
-    'basketball': 3,
-    'beach_soccer': 23,
-    'billiard': 29,
-    'combat_sport': 75,
-    'cricket': 41,
-    'cycling': 40,
-    'darts': 30,
-    'field_hockey': 38,
-    'floorball': 32,
-    'football': 1,
-    'futsal': 12,
-    'golf': 37,
-    'handball': 13,
-    'ice_hockey': 2,
-    'mma': 110,
-    'netball': 96,
-    'padel_tennis': 71,
-    'racing': 7,
-    'rugby_league': 17,
-    'rugby_sevens': 77,
-    'rugby_union': 33,
-    'table_tennis': 39,
-    'tennis': 4,
-    'volleyball': 5,
-    'winter_sport': 18
-}
-
-
-def main(category: str, text: str, hours: int, show_empty: bool):
-    search_text = f'with text "{text}" ' if text else ''
-    categories = [category] if category else CATEGORIES.keys()
-
-    events = []
-    for category in categories:
-        logging.info(
-            f'Searching for events {search_text}'
-            f'on category "{category}" in '
-            f'the next {hours} hours'
-        )
-        resp = requests.get(
-            f'{MAIN_URL}/enx/allupcomingsports/{CATEGORIES[category]}/',
-            verify=False
-        )
-        resp.raise_for_status()
-        if resp.history:
-            main_url = 'https://' + urlparse(resp.url).netloc
-            logger.warning(f'Main url has changed to "{main_url}"')
-        main_sop = BeautifulSoup(resp.text, 'html.parser')
-
-        events.extend(get_events(main_sop, text, hours, category, show_empty))
-
-    table = [
-        [e['title'], e['category'], *get_event_subtables(e)] for
-        e in sorted(
-            events, key=lambda x: (x['date'], x['category'])
-        ) if e['links']
-    ]
-    if not table:
-        logger.info('Nothing found')
-        return
-
-    print("")
-    print(
-        tabulate(
-            table,
-            headers=[
-                'Event', 'Category', 'Acestream Links', 'Language', 'Bitrate'
-            ],
-            tablefmt='fancy_grid',
-            stralign='center',
-            rowalign='center'
-        )
-    )
 
 
 def get_event_subtables(event):
@@ -188,46 +107,48 @@ def get_events(
     return all_targets.values()
 
 
-def __main__():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--category',
-        type=str,
-        choices=CATEGORIES.keys(),
-        default=None,
-        help='Event category (default: all)'
-    )
-    parser.add_argument(
-        '--search',
-        type=str,
-        default='',
-        metavar='TEXT',
-        help='Text to look for in the event titles (default: any text)'
-    )
-    parser.add_argument(
-        '--hours',
-        type=int,
-        default=1,
-        help='Events starting within the next number of hours. '
-        'Started events are also included (2 hours ago max). '
-        '(default: 1 hour)'
-    )
-    parser.add_argument(
-        '--show-empty',
-        action='store_true',
-        default=False,
-        help='Show events with no available acestream links (default: False)'
-    )
-    args = parser.parse_args()
-    main(args.category, args.search, args.hours, args.show_empty)
+def run(category: str, text: str, hours: int, show_empty: bool):
+    search_text = f'with text "{text}" ' if text else ''
+    categories = [category] if category else CATEGORIES.keys()
 
+    events = []
+    for category in categories:
+        logger.info(
+            f'Searching for events {search_text}'
+            f'on category "{category}" in '
+            f'the next {hours} hours'
+        )
+        resp = requests.get(
+            f'{MAIN_URL}/enx/allupcomingsports/{CATEGORIES[category]}/',
+            verify=False
+        )
+        resp.raise_for_status()
+        if resp.history:
+            main_url = 'https://' + urlparse(resp.url).netloc
+            logger.warning(f'Main url has changed to "{main_url}"')
+        main_sop = BeautifulSoup(resp.text, 'html.parser')
 
-requests.packages.urllib3.disable_warnings()
+        events.extend(get_events(main_sop, text, hours, category, show_empty))
 
-logger = logging.getLogger()
-logger.setLevel('INFO')
-format = '[%(levelname)s] %(message)s'
-logging.basicConfig(format=format)
+    table = [
+        [e['title'], e['category'], *get_event_subtables(e)] for
+        e in sorted(
+            events, key=lambda x: (x['date'], x['category'])
+        ) if e['links']
+    ]
+    if not table:
+        logger.info('Nothing found')
+        return
 
-if __name__ == '__main__':
-    __main__()
+    print("")
+    print(
+        tabulate(
+            table,
+            headers=[
+                'Event', 'Category', 'Acestream Links', 'Language', 'Bitrate'
+            ],
+            tablefmt='fancy_grid',
+            stralign='center',
+            rowalign='center'
+        )
+    )
