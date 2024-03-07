@@ -76,7 +76,7 @@ jobs:
           body: ${{ steps.tag_version.outputs.changelog }}
           artifacts: >-
             acestream-search-linux/acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz,
-            acestream-search-windows/acestream-search-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip
+            acestream-search-windows/acestream-search-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip,
             acestream-search-gui-linux/acestream-search-gui-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz,
             acestream-search-gui-windows/acestream-search-gui-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip
           artifactErrorsFailBuild: true

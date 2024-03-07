@@ -40,4 +40,4 @@ $ acestream-search-gui
 
 ## Collaborators
 
-- @dressi46: GUI tool proposal and initial implementation
+- [@dressi46](https://github.com/dressi46): GUI tool proposal and initial implementation
