@@ -4,7 +4,7 @@ import datetime
 import re
 import requests
 
-from acestream_search import logger
+from acestream_search.log import logger
 from acestream_search.common.constants import CATEGORIES, MAIN_URL
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as date_parse
@@ -12,7 +12,31 @@ from tabulate import tabulate
 from urllib.parse import urlparse
 
 
-def get_event_subtables(event):
+def get_events_table(events: list):
+    table = [
+        [
+            e['title'], e['category'],
+            *get_events_extra_columns(e)
+        ] for e in sorted(
+            events, key=lambda x: (x['date'], x['category'])
+        ) if e['links']
+    ]
+    if not table:
+        logger.info('Nothing found')
+        return
+
+    return tabulate(
+        table,
+        headers=[
+            'Event', 'Category', 'Acestream Links', 'Language', 'Bitrate'
+        ],
+        tablefmt='fancy_grid',
+        stralign='center',
+        rowalign='center'
+    )
+
+
+def get_events_extra_columns(event: dict):
     properties = ['url', 'language', 'bitrate']
     return [
         tabulate(
@@ -22,7 +46,7 @@ def get_event_subtables(event):
     ]
 
 
-def get_events(
+def get_events_from_sop(
     category_sop: BeautifulSoup, text: str,
     hours: int, category: str, show_empty: bool
 ):
@@ -104,10 +128,13 @@ def get_events(
                 'bitrate': '-'
             }] if show_empty else None
         )
+
     return all_targets.values()
 
 
-def run(category: str, text: str, hours: int, show_empty: bool):
+def get_events(
+    text: str, hours: int, category: str, show_empty: bool
+):
     search_text = f'with text "{text}" ' if text else ''
     categories = [category] if category else CATEGORIES.keys()
 
@@ -128,27 +155,19 @@ def run(category: str, text: str, hours: int, show_empty: bool):
             logger.warning(f'Main url has changed to "{main_url}"')
         main_sop = BeautifulSoup(resp.text, 'html.parser')
 
-        events.extend(get_events(main_sop, text, hours, category, show_empty))
+        events.extend(
+            get_events_from_sop(main_sop, text, hours, category, show_empty)
+        )
 
-    table = [
-        [e['title'], e['category'], *get_event_subtables(e)] for
-        e in sorted(
-            events, key=lambda x: (x['date'], x['category'])
-        ) if e['links']
-    ]
-    if not table:
-        logger.info('Nothing found')
+    return events
+
+
+def run(category: str, text: str, hours: int, show_empty: bool):
+    events = get_events(text, hours, category, show_empty)
+
+    events_table = get_events_table(events)
+    if not events_table:
         return
 
     print("")
-    print(
-        tabulate(
-            table,
-            headers=[
-                'Event', 'Category', 'Acestream Links', 'Language', 'Bitrate'
-            ],
-            tablefmt='fancy_grid',
-            stralign='center',
-            rowalign='center'
-        )
-    )
+    print(events_table)
