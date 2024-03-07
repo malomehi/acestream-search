@@ -1,16 +1,19 @@
 # acestream-search
-Simple script to find acestream links
+Simple tool to scrape acestream links from HTML content
 
 ## Install
 
-Just run the following in your python virtual environment:
+Just run the following command in your python virtual environment:
 ```
 pip install git+https://github.com/malomehi/acestream-search --upgrade
 ```
 
-Alternatively download the executable binary file from the [release page](https://github.com/malomehi/acestream-search/releases)
+Alternatively download the executable binary files from the [release page](https://github.com/malomehi/acestream-search/releases)
 
 ## Usage
+
+### Console Tool
+
 ```console
 $ acestream-search --help
 usage: acestream-search [-h]
@@ -26,3 +29,11 @@ options:
   --show-empty          Show events with no available acestream links (default: False)
 $
 ```
+
+### GUI Tool
+
+```console
+$ acestream-search-gui
+```
+
+![imagen](https://github.com/malomehi/acestream-search/assets/1456960/a66aa7f2-e8ea-403d-860c-b9aef98a5539)
