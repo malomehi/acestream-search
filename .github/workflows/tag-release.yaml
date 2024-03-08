@@ -1,46 +1,32 @@
 name: bump-version
-on:
-  push:
-    branches: [master]
+on: workflow_dispatch
 jobs:
   build-linux-binaries:
     runs-on: ubuntu-latest
     steps:
-      - name: Package acestream-search Linux application
+      - name: Package Linux application
         uses: sayyid5416/pyinstaller@v1
         with:
           python_ver: '3.11'
           spec: acestream_search.spec
           requirements: requirements.txt
-          exe_path: dist/linux
-          upload_exe_with_name: acestream-search-linux
-      - name: Package acestream-search-gui Linux application
-        uses: sayyid5416/pyinstaller@v1
+      - uses: actions/upload-artifact@v4
         with:
-          python_ver: '3.11'
-          spec: acestream_search_gui.spec
-          requirements: requirements.txt
-          exe_path: dist/linux
-          upload_exe_with_name: acestream-search-gui-linux
+          name: binaries-linux
+          path: dist
   build-windows-binaries:
     runs-on: windows-latest
     steps:
-      - name: Package acestream-search Windows application
+      - name: Package Windows application
         uses: sayyid5416/pyinstaller@v1
         with:
           python_ver: '3.11'
           spec: acestream_search.spec
           requirements: requirements.txt
-          exe_path: dist/windows
-          upload_exe_with_name: acestream-search-windows
-      - name: Package acestream-search-gui Windows application
-        uses: sayyid5416/pyinstaller@v1
+      - uses: actions/upload-artifact@v4
         with:
-          python_ver: '3.11'
-          spec: acestream_search_gui.spec
-          requirements: requirements.txt
-          exe_path: dist/windows
-          upload_exe_with_name: acestream-search-gui-windows
+          name: binaries-windows
+          path: dist
   tag-and-release:
     needs: [build-linux-binaries, build-windows-binaries]
     permissions:
@@ -53,20 +39,16 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
       - run: >-
-          cd acestream-search-linux &&
+          cd binaries-linux &&
           chmod +x acestream-search &&
-          tar czvf acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz acestream-search
-      - run: >-
-          cd acestream-search-gui-linux &&
           chmod +x acestream-search-gui &&
+          tar czvf acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz acestream-search &&
           tar czvf acestream-search-gui-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz acestream-search-gui
       - run: >-
-          cd acestream-search-windows &&
-          zip acestream-search-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip acestream-search.exe
-      - run: >-
-          cd acestream-search-gui-windows &&
+          cd binaries-windows &&
+          zip acestream-search-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip acestream-search.exe &&
           zip acestream-search-gui-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip acestream-search-gui.exe
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
@@ -75,8 +57,8 @@ jobs:
           name: Release ${{ steps.tag_version.outputs.new_tag }}
           body: ${{ steps.tag_version.outputs.changelog }}
           artifacts: >-
-            acestream-search-linux/acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz,
-            acestream-search-windows/acestream-search-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip,
-            acestream-search-gui-linux/acestream-search-gui-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz,
-            acestream-search-gui-windows/acestream-search-gui-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip
+            binaries-linux/acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz,
+            binaries-windows/acestream-search-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip,
+            binaries-linux/acestream-search-gui-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz,
+            binaries-windows/acestream-search-gui-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip
           artifactErrorsFailBuild: true
