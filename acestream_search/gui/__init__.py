@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import re
 import tkinter as tk
 import threading
+import webbrowser
 
 from acestream_search.common.constants import CATEGORIES
+from acestream_search.gui.hyperlink import HyperlinkManager
 from acestream_search.log import logger, FORMAT
 from acestream_search.events import get_events, get_events_table
+from functools import partial
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
@@ -91,7 +95,7 @@ class GuiApp():
         main_frame, width=170, height=20, wrap=tk.WORD, font=("Courier", 9)
     )
     result_text.grid(row=8, column=0, columnspan=2, sticky=(tk.W, tk.E))
-    result_text.config(state=tk.DISABLED)
+    result_text.config(state=tk.DISABLED, foreground="blue3")
 
     # Create a horizontal scrollbar
     xscrollbar = ttk.Scrollbar(
@@ -152,8 +156,22 @@ class GuiApp():
         table = get_events_table(events)
 
         if table:
+            chunks = re.split('(acestream:\\/\\/\\S+)', table)
             self.result_text.config(state=tk.NORMAL)
-            self.result_text.insert(tk.END, f'\n{table}\n')
+            self.result_text.insert(tk.END, '\n')
+            hyperlinks = HyperlinkManager(self.result_text)
+            for chunk in chunks:
+                if chunk.startswith('acestream://'):
+                    self.result_text.insert(
+                        tk.END,
+                        chunk,
+                        hyperlinks.add(
+                            partial(webbrowser.open, chunk)
+                        )
+                    )
+                else:
+                    self.result_text.insert(tk.END, chunk)
+            self.result_text.insert(tk.END, '\n')
             self.result_text.see(tk.END)
             self.result_text.config(state=tk.DISABLED)
 
