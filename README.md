@@ -36,7 +36,7 @@ $
 $ acestream-search-gui
 ```
 
-![imagen](https://github.com/malomehi/acestream-search/assets/1456960/a66aa7f2-e8ea-403d-860c-b9aef98a5539)
+![image](https://github.com/malomehi/acestream-search/assets/1456960/bba3b0ab-9835-4aa7-a9eb-b82da1a5c088)
 
 ## Collaborators
 

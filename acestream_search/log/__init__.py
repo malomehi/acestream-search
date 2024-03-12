@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import platform
 
 
 COLORS = {
@@ -24,7 +25,9 @@ FORMATS = {
 
 class CustomFormatter(logging.Formatter):
     def format(self, record):
-        log_fmt = FORMATS.get(record.levelno)
+        log_fmt = FORMATS.get(
+            record.levelno
+        ) if platform.system() != 'Windows' else FORMAT
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
