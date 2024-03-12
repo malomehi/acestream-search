@@ -1,5 +1,15 @@
 name: bump-version
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Release Type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 jobs:
   build-linux-binaries:
     runs-on: ubuntu-latest
@@ -33,6 +43,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          default_bump: ${{ github.event.inputs.bump_type}}
       - uses: actions/download-artifact@v4
       - run: >-
           cd binaries-linux &&
