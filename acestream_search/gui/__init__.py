@@ -101,8 +101,8 @@ class GuiApp():
 
     ip_warning = ttk.Label(
         main_frame,
-        text=' (The device must have ADB debugging enabled '
-        'and Ace Stream installed)'
+        text=' (Android devices must have remote ADB '
+        'debugging enabled and Ace Stream app installed)'
     )
     ip_warning.grid(row=5, column=2, sticky=tk.W)
 

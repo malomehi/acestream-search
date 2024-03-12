@@ -32,17 +32,19 @@ $
 
 ### GUI Tool
 
-The Console Tool, from version `v0.0.9`, has an extra feature to send the links to Android devices (e.g. Android TV, Fire TV Stick, etc.). It can also send the link to the local device where the application is running.
+The GUI Tool, from version `v0.0.9` onwards, has an extra feature to send the links to remote Android devices (e.g. Android TV, Fire TV Stick, etc.). It can also send the links to the local device where the application is running.
 
-Local devices (where the application runs) must have the Ace Stream application installed. Adroid devices must have remote ADB debugging enabled and the Ace Stream application installed.
+In order to use these features, the local device (where the application runs) must have the Ace Stream application installed and Adroid devices (remote devices) must have remote ADB debugging enabled and the Ace Stream application installed.
 
-You can google how to do this.
+You can google how to achieve the above.
+
+The GUI tool will automatically discover Android devices in the local network with remote ADB debugging enabled. This will happen when the application starts.
 
 ```console
 $ acestream-search-gui
 ```
 
-![image](https://github.com/malomehi/acestream-search/assets/1456960/4e17b4e0-e5d4-4771-9178-c611c6e2cf7c)
+![imagen](https://github.com/malomehi/acestream-search/assets/1456960/2116f002-bc08-4896-92e1-8747ac8df86a)
 
 ## Collaborators
 
