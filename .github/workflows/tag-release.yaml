@@ -10,10 +10,7 @@ jobs:
           python_ver: '3.11'
           spec: acestream_search.spec
           requirements: requirements.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: binaries-linux
-          path: dist
+          upload_exe_with_name: binaries-linux
   build-windows-binaries:
     runs-on: windows-latest
     steps:
@@ -23,10 +20,7 @@ jobs:
           python_ver: '3.11'
           spec: acestream_search.spec
           requirements: requirements.txt
-      - uses: actions/upload-artifact@v4
-        with:
-          name: binaries-windows
-          path: dist
+          upload_exe_with_name: binaries-windows
   tag-and-release:
     needs: [build-linux-binaries, build-windows-binaries]
     permissions:

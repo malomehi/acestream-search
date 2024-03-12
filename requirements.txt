@@ -1,4 +1,6 @@
+adb-shell
 bs4
+portscan
 python-dateutil
 requests
 tabulate

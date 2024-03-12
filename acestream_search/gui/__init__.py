@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import os
 import re
+import shutil
 import tkinter as tk
 import threading
 import webbrowser
 
+from acestream_search.adb import Client
+from acestream_search.adb.discover import discover_adb_devices
+from acestream_search.adb.server import run_adb_command
 from acestream_search.common.constants import CATEGORIES
 from acestream_search.gui.hyperlink import HyperlinkManager
 from acestream_search.log import logger, FORMAT
@@ -47,9 +52,9 @@ class GuiApp():
     log_label.grid(row=0, column=0, sticky=tk.W)  # Place log label in row 0
 
     log_text = ScrolledText(
-        main_frame, width=170, height=5, wrap=tk.WORD, font=("Courier", 9)
+        main_frame, width=160, height=5, wrap=tk.WORD, font=("Courier", 9)
     )
-    log_text.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E))
+    log_text.grid(row=1, column=0, columnspan=3, sticky=(tk.W, tk.E))
     log_text.config(state=tk.DISABLED)
 
     # Set up logging
@@ -81,20 +86,40 @@ class GuiApp():
     hours_entry.grid(row=4, column=1, sticky=tk.W)
     hours_entry.insert(tk.END, "1")
 
+    ip_label = ttk.Label(main_frame, text='Android device IP:')
+    ip_label.grid(row=5, column=0, sticky=tk.W)
+
+    ips = discover_adb_devices()
+
+    ip_var = tk.StringVar()
+    ip_combobox = ttk.Combobox(
+        main_frame, textvariable=ip_var, values=ips
+    )
+    ip_combobox.grid(row=5, column=1, sticky=tk.W)
+    if ips:
+        ip_combobox.current(0)
+
+    ip_warning = ttk.Label(
+        main_frame,
+        text=' (The device must have ADB debugging enabled '
+        'and Ace Stream installed)'
+    )
+    ip_warning.grid(row=5, column=2, sticky=tk.W)
+
     show_empty_var = tk.BooleanVar()
     show_empty_checkbox = ttk.Checkbutton(
         main_frame, text="Show Empty", variable=show_empty_var
     )
-    show_empty_checkbox.grid(row=5, column=0, columnspan=2, sticky=tk.W)
+    show_empty_checkbox.grid(row=6, column=0, columnspan=3, sticky=tk.W)
 
     result_label = ttk.Label(main_frame, text="Results:")
-    result_label.grid(row=7, column=0, sticky=tk.W)
+    result_label.grid(row=8, column=0, sticky=tk.W)
 
     # Create a ScrolledText with horizontal scrolling
     result_text = ScrolledText(
-        main_frame, width=170, height=20, wrap=tk.WORD, font=("Courier", 9)
+        main_frame, width=160, height=20, wrap=tk.WORD, font=("Courier", 9)
     )
-    result_text.grid(row=8, column=0, columnspan=2, sticky=(tk.W, tk.E))
+    result_text.grid(row=9, column=0, columnspan=3, sticky=(tk.W, tk.E))
     result_text.config(state=tk.DISABLED, foreground="blue3")
 
     # Create a horizontal scrollbar
@@ -103,12 +128,14 @@ class GuiApp():
         orient="horizontal",
         command=result_text.xview
     )
-    xscrollbar.grid(row=9, column=0, columnspan=2, sticky=(tk.W, tk.E))
+    xscrollbar.grid(row=10, column=0, columnspan=3, sticky=(tk.W, tk.E))
 
     # Connect the horizontal scrollbar with the ScrolledText widget
     result_text.config(xscrollcommand=xscrollbar.set)
 
-    main_frame.columnconfigure(1, weight=1)
+    main_frame.columnconfigure(2, weight=1)
+
+    adb_client = Client()
 
     def __init__(self):
         self.search_button = ttk.Button(
@@ -117,20 +144,24 @@ class GuiApp():
             command=self.start_search_thread
         )
         self.search_button.grid(
-            row=6, column=0, columnspan=2, sticky=(tk.E, tk.W)
+            row=7, column=0, columnspan=3, sticky=(tk.E, tk.W)
         )
+        self.root.protocol('WM_DELETE_WINDOW', self.window_exit)
+
+    def play_on_android(self, link):
+        threading.Thread(
+            target=self.adb_client.play_stream,
+            daemon=True,
+            args=(self.ip_var.get(), link)
+        ).start()
 
     def search_streams(self):
         """Function to initiate the search process."""
 
-        # Clear the result_text and log_text widgets
+        # Clear the result_text widget
         self.result_text.config(state=tk.NORMAL)
         self.result_text.delete("1.0", tk.END)
         self.result_text.config(state=tk.DISABLED)
-
-        self.log_text.config(state=tk.NORMAL)
-        self.log_text.delete("1.0", tk.END)
-        self.log_text.config(state=tk.DISABLED)
 
         try:
             hours = int(self.hours_entry.get())
@@ -142,6 +173,9 @@ class GuiApp():
             return
 
         category = self.category_var.get()
+        if category not in self.categories:
+            logger.error(f'"{category}" is not a valid category')
+            return
         if category == 'All':
             category = None
 
@@ -152,21 +186,34 @@ class GuiApp():
             state=tk.DISABLED
         )  # Disable the button while search is in progress
 
-        events = get_events(search_text, hours, category, show_empty)
+        events = get_events(search_text, hours, category, show_empty, True)
         table = get_events_table(events)
 
         if table:
-            chunks = re.split('(acestream:\\/\\/\\S+)', table)
+            chunks = re.split(
+                '(acestream:\\/\\/\\S+ \\(Play on Android\\))',
+                table
+            )
             self.result_text.config(state=tk.NORMAL)
             self.result_text.insert(tk.END, '\n')
             hyperlinks = HyperlinkManager(self.result_text)
             for chunk in chunks:
                 if chunk.startswith('acestream://'):
+                    link = chunk.split()[0]
                     self.result_text.insert(
                         tk.END,
-                        chunk,
+                        link,
+                        hyperlinks.add(partial(webbrowser.open, link))
+                    )
+                    self.result_text.insert(tk.END, ' ')
+                    self.result_text.insert(
+                        tk.END,
+                        '(Play on Android)',
                         hyperlinks.add(
-                            partial(webbrowser.open, chunk)
+                            partial(
+                                self.play_on_android,
+                                link
+                            )
                         )
                     )
                 else:
@@ -181,6 +228,25 @@ class GuiApp():
 
     def start_search_thread(self):
         threading.Thread(target=self.search_streams, daemon=True).start()
+
+    def cleanup(self):
+        if self.adb_client.server_running:
+            logger.info('Stopping ADB server')
+            self.adb_client.server_running = not run_adb_command(
+                self.adb_client.adb_path, 'kill-server'
+            )
+        if not self.adb_client.server_running and self.adb_client.adb_path:
+            temp_dir = os.path.join(
+                self.adb_client.adb_path, 'platform-tools'
+            )
+            shutil.rmtree(temp_dir)
+            logger.info(
+                f'Deleted temp directory with adb binary "{temp_dir}"'
+            )
+
+    def window_exit(self):
+        self.cleanup()
+        self.root.destroy()
 
     def run(self):
         self.root.mainloop()

@@ -48,7 +48,8 @@ def get_events_extra_columns(event: dict):
 
 def get_events_from_sop(
     category_sop: BeautifulSoup, text: str,
-    hours: int, category: str, show_empty: bool
+    hours: int, category: str, show_empty: bool,
+    include_android: bool
 ):
     pattern = re.compile(text, re.IGNORECASE)
     live_parents = set(
@@ -116,6 +117,8 @@ def get_events_from_sop(
                 name='td', attrs={'class': 'bitrate'}
             ).text or 'Unknown'
             url = acestream_sop.get('href')
+            if include_android:
+                url += ' (Play on Android)'
             acestream_links.append(
                 {'url': url, 'language': language, 'bitrate': bitrate}
             )
@@ -133,7 +136,8 @@ def get_events_from_sop(
 
 
 def get_events(
-    text: str, hours: int, category: str, show_empty: bool
+    text: str, hours: int, category: str,
+    show_empty: bool, include_android=False
 ):
     search_text = f'with text "{text}" ' if text else ''
     categories = [category] if category else CATEGORIES.keys()
@@ -156,7 +160,10 @@ def get_events(
         main_sop = BeautifulSoup(resp.text, 'html.parser')
 
         events.extend(
-            get_events_from_sop(main_sop, text, hours, category, show_empty)
+            get_events_from_sop(
+                main_sop, text, hours, category,
+                show_empty, include_android
+            )
         )
 
     return events
