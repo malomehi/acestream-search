@@ -8,7 +8,7 @@ Just run the following command in your python virtual environment:
 pip install git+https://github.com/malomehi/acestream-search --upgrade
 ```
 
-Alternatively download the executable binary files from the [release page](https://github.com/malomehi/acestream-search/releases)
+Alternatively download the executable files from the [release page](https://github.com/malomehi/acestream-search/releases) (Linux and Windows operative systems are supported, x64)
 
 ## Usage
 
@@ -32,11 +32,17 @@ $
 
 ### GUI Tool
 
+The Console Tool, from version `v0.0.9`, has an extra feature to send the links to Android devices (e.g. Android TV, Fire TV Stick, etc.). It can also send the link to the local device where the application is running.
+
+Local devices (where the application runs) must have the Ace Stream application installed. Adroid devices must have remote ADB debugging enabled and the Ace Stream application installed.
+
+You can google how to do this.
+
 ```console
 $ acestream-search-gui
 ```
 
-![image](https://github.com/malomehi/acestream-search/assets/1456960/bba3b0ab-9835-4aa7-a9eb-b82da1a5c088)
+![image](https://github.com/malomehi/acestream-search/assets/1456960/4e17b4e0-e5d4-4771-9178-c611c6e2cf7c)
 
 ## Collaborators
 
