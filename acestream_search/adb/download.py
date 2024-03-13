@@ -35,7 +35,7 @@ def download_adb_binary() -> str:
 
     if platform.system() != 'Windows':
         subprocess.run(
-            ["chmod", "+x", os.path.join(temp_dir, 'platform-tools', 'adb')]
+            ['chmod', '+x', os.path.join(temp_dir, 'platform-tools', 'adb')]
         )
 
     os.remove(download_path)

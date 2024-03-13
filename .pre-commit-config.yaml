@@ -5,6 +5,7 @@ repos:
   - id: check-yaml
   - id: check-ast
   - id: fix-encoding-pragma
+  - id: double-quote-string-fixer
 - repo: https://github.com/pycqa/flake8
   rev: '7.0.0'
   hooks:

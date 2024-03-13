@@ -176,5 +176,5 @@ def run(category: str, text: str, hours: int, show_empty: bool):
     if not events_table:
         return
 
-    print("")
+    print('')
     print(events_table)
