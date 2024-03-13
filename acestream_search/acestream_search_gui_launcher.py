@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from acestream_search.gui import GuiApp
 
 

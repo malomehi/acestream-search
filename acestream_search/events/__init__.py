@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-
 import datetime
 import re
-import requests
+from urllib.parse import urlparse
 
-from acestream_search.log import logger
-from acestream_search.common.constants import CATEGORIES, MAIN_URL
+import requests
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as date_parse
 from tabulate import tabulate
-from urllib.parse import urlparse
+
+from acestream_search.common.constants import CATEGORIES
+from acestream_search.common.constants import MAIN_URL
+from acestream_search.log import logger
 
 
 def get_events_table(events: list):

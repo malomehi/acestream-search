@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-
 import logging
 import os
 import re
 import shutil
-import tkinter as tk
 import threading
+import tkinter as tk
 import webbrowser
+from functools import partial
+from tkinter import ttk
+from tkinter.scrolledtext import ScrolledText
 
 from acestream_search.adb import Client
 from acestream_search.adb.discover import discover_adb_devices
 from acestream_search.adb.server import run_adb_command
 from acestream_search.common.constants import CATEGORIES
+from acestream_search.events import get_events
+from acestream_search.events import get_events_table
 from acestream_search.gui.hyperlink import HyperlinkManager
-from acestream_search.log import logger, FORMAT
-from acestream_search.events import get_events, get_events_table
-from functools import partial
-from tkinter import ttk
-from tkinter.scrolledtext import ScrolledText
+from acestream_search.log import FORMAT
+from acestream_search.log import logger
 
 
 class TextHandler(logging.Handler):
@@ -200,12 +201,7 @@ class GuiApp():
                     self.result_text.insert(
                         tk.END,
                         '(Play on Android)',
-                        hyperlinks.add(
-                            partial(
-                                self.play_on_android,
-                                link
-                            )
-                        )
+                        hyperlinks.add(partial(self.play_on_android, link))
                     )
                 else:
                     self.result_text.insert(tk.END, chunk)

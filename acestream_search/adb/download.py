@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-
 import os
 import platform
-import requests
 import subprocess
 import tempfile
 import zipfile
+
+import requests
 
 from acestream_search.log import logger
 

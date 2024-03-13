@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
 # Sourced from:
 # https://github.com/codewithdev/Code-Snippets/blob/master/tkinter/tkHyperlinkManager.py
-
 from tkinter import CURRENT
 
 

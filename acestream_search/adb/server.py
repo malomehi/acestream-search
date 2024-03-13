@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-
 import os
 import subprocess
 
+from adb_shell.adb_device import AdbDeviceTcp
+
 from acestream_search.adb.auth import set_signer
 from acestream_search.log import logger
-from adb_shell.adb_device import AdbDeviceTcp
 
 
 def run_adb_command(adb_path: str, command: str) -> bool:

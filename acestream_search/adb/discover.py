@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import portscan
 
 from acestream_search.log import logger
