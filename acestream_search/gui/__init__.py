@@ -44,9 +44,13 @@ class TextHandler(logging.Handler):
 class GuiApp():
     root = tk.Tk()
     root.title("Acestream Search - GUI")
+    root.grid_columnconfigure(0, weight=1)
+    root.grid_rowconfigure(0, weight=1)
 
     main_frame = ttk.Frame(root, padding="20")
-    main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+    main_frame.grid(row=0, column=0, sticky=(tk.NSEW))
+    main_frame.columnconfigure(2, weight=1)
+    main_frame.rowconfigure(9, weight=1)
 
     log_label = ttk.Label(main_frame, text="Console:")
     log_label.grid(row=0, column=0, sticky=tk.W)  # Place log label in row 0
@@ -54,7 +58,7 @@ class GuiApp():
     log_text = ScrolledText(
         main_frame, width=160, height=5, wrap=tk.WORD, font=("Courier", 9)
     )
-    log_text.grid(row=1, column=0, columnspan=3, sticky=(tk.W, tk.E))
+    log_text.grid(row=1, column=0, columnspan=3, sticky=(tk.EW))
     log_text.config(state=tk.DISABLED)
 
     # Set up logging
@@ -119,21 +123,8 @@ class GuiApp():
     result_text = ScrolledText(
         main_frame, width=160, height=20, wrap=tk.WORD, font=("Courier", 9)
     )
-    result_text.grid(row=9, column=0, columnspan=3, sticky=(tk.W, tk.E))
+    result_text.grid(row=9, column=0, columnspan=3, sticky=tk.NSEW)
     result_text.config(state=tk.DISABLED, foreground="blue3")
-
-    # Create a horizontal scrollbar
-    xscrollbar = ttk.Scrollbar(
-        main_frame,
-        orient="horizontal",
-        command=result_text.xview
-    )
-    xscrollbar.grid(row=10, column=0, columnspan=3, sticky=(tk.W, tk.E))
-
-    # Connect the horizontal scrollbar with the ScrolledText widget
-    result_text.config(xscrollcommand=xscrollbar.set)
-
-    main_frame.columnconfigure(2, weight=1)
 
     adb_client = Client()
 
@@ -144,7 +135,7 @@ class GuiApp():
             command=self.start_search_thread
         )
         self.search_button.grid(
-            row=7, column=0, columnspan=3, sticky=(tk.E, tk.W)
+            row=7, column=0, columnspan=3, sticky=(tk.EW)
         )
         self.root.protocol('WM_DELETE_WINDOW', self.window_exit)
 
@@ -219,7 +210,6 @@ class GuiApp():
                 else:
                     self.result_text.insert(tk.END, chunk)
             self.result_text.insert(tk.END, '\n')
-            self.result_text.see(tk.END)
             self.result_text.config(state=tk.DISABLED)
 
         self.search_button.config(
