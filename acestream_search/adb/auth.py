@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 
 from adb_shell.auth.keygen import keygen

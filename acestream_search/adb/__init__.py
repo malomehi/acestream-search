@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import ipaddress
 
 from acestream_search.adb.download import download_adb_binary

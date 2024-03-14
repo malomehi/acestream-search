@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import datetime
 import re
 from urllib.parse import urlparse
@@ -53,19 +52,19 @@ def get_events_from_sop(
     include_android: bool
 ):
     pattern = re.compile(text, re.IGNORECASE)
-    live_parents = set(
+    live_parents = {
         live.parent.parent for live in category_sop.findAll(
             name='a',
             attrs={'class': 'live'},
             string=pattern
         )
-    )
-    alt_parents = set(
+    }
+    alt_parents = {
         alt.parent.parent for alt in category_sop.findAll(
             name='img',
             attrs={'alt': pattern}
         )
-    )
+    }
     all_targets = {}
     now = datetime.datetime.now()
     for event_parent in live_parents.union(alt_parents):
