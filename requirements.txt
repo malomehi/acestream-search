@@ -1,6 +1,6 @@
-adb-shell
-bs4
-portscan
-python-dateutil
-requests
-tabulate
+adb-shell==0.4.4
+bs4==0.0.2
+portscan==1.1
+python-dateutil==2.9.0.post0
+requests==2.31.0
+tabulate==0.9.0
