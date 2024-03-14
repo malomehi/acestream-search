@@ -58,7 +58,7 @@ class GuiApp():
     log_text = ScrolledText(
         main_frame, width=160, height=5, wrap=tk.WORD, font=('Courier', 9)
     )
-    log_text.grid(row=1, column=0, columnspan=3, sticky=(tk.EW))
+    log_text.grid(row=1, column=0, columnspan=3, pady=5, sticky=(tk.EW))
     log_text.config(state=tk.DISABLED)
 
     # Set up logging
@@ -90,7 +90,7 @@ class GuiApp():
     hours_entry.grid(row=4, column=1, sticky=tk.W)
     hours_entry.insert(tk.END, '1')
 
-    ip_label = ttk.Label(main_frame, text='Android device IP:')
+    ip_label = ttk.Label(main_frame, text='Android device IP: ')
     ip_label.grid(row=5, column=0, sticky=tk.W)
 
     ips = discover_adb_devices()
@@ -123,7 +123,7 @@ class GuiApp():
     result_text = ScrolledText(
         main_frame, width=160, height=20, wrap=tk.WORD, font=('Courier', 9)
     )
-    result_text.grid(row=9, column=0, columnspan=3, sticky=tk.NSEW)
+    result_text.grid(row=9, column=0, columnspan=3, pady=5, sticky=tk.NSEW)
     result_text.config(state=tk.DISABLED, foreground='blue3')
 
     adb_client = Client()
@@ -135,7 +135,7 @@ class GuiApp():
             command=self.start_search_thread
         )
         self.search_button.grid(
-            row=7, column=0, columnspan=3, sticky=(tk.EW)
+            row=7, column=0, columnspan=3, pady=5, sticky=(tk.EW)
         )
         self.root.protocol('WM_DELETE_WINDOW', self.window_exit)
 
