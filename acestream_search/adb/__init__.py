@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import ipaddress
 
 from acestream_search.adb.download import download_adb_binary
-from acestream_search.adb.server import connect, run_adb_command
+from acestream_search.adb.server import connect
+from acestream_search.adb.server import run_adb_command
 from acestream_search.log import logger
 
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 
 from adb_shell.auth.keygen import keygen
@@ -7,7 +5,7 @@ from adb_shell.auth.sign_pythonrsa import PythonRSASigner
 
 
 def set_signer():
-    home = os.path.expanduser("~")
+    home = os.path.expanduser('~')
     keys_path = os.path.join(home, '.android')
     if not os.path.exists(keys_path):
         os.mkdir(keys_path)

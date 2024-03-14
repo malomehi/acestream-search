@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
-
 import datetime
 import re
-import requests
+from urllib.parse import urlparse
 
-from acestream_search.log import logger
-from acestream_search.common.constants import CATEGORIES, MAIN_URL
+import requests
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as date_parse
 from tabulate import tabulate
-from urllib.parse import urlparse
+
+from acestream_search.common.constants import CATEGORIES
+from acestream_search.common.constants import MAIN_URL
+from acestream_search.log import logger
 
 
 def get_events_table(events: list):
@@ -52,19 +52,19 @@ def get_events_from_sop(
     include_android: bool
 ):
     pattern = re.compile(text, re.IGNORECASE)
-    live_parents = set(
+    live_parents = {
         live.parent.parent for live in category_sop.findAll(
             name='a',
             attrs={'class': 'live'},
             string=pattern
         )
-    )
-    alt_parents = set(
+    }
+    alt_parents = {
         alt.parent.parent for alt in category_sop.findAll(
             name='img',
             attrs={'alt': pattern}
         )
-    )
+    }
     all_targets = {}
     now = datetime.datetime.now()
     for event_parent in live_parents.union(alt_parents):
@@ -176,5 +176,5 @@ def run(category: str, text: str, hours: int, show_empty: bool):
     if not events_table:
         return
 
-    print("")
+    print('')
     print(events_table)

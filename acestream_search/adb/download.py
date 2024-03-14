@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
-
 import os
 import platform
-import requests
 import subprocess
 import tempfile
 import zipfile
+
+import requests
 
 from acestream_search.log import logger
 
@@ -35,7 +34,7 @@ def download_adb_binary() -> str:
 
     if platform.system() != 'Windows':
         subprocess.run(
-            ["chmod", "+x", os.path.join(temp_dir, 'platform-tools', 'adb')]
+            ['chmod', '+x', os.path.join(temp_dir, 'platform-tools', 'adb')]
         )
 
     os.remove(download_path)

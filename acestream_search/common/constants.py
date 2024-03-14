@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 MAIN_URL = 'https://livetv766.me'
 
 CATEGORIES = {
