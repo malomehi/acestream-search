@@ -16,6 +16,8 @@ on:
         required: true
         type: boolean
         default: false
+  pull_request:
+    branches: master
 
 jobs:
   build-binaries:
@@ -36,7 +38,9 @@ jobs:
           requirements: requirements.txt
           upload_exe_with_name: binaries-${{ matrix.flavour.os }}
   tag-and-release:
-    if: ${{ inputs.tag_and_release == true }}
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      inputs.tag_and_release == true
     needs: build-binaries
     permissions:
       contents: write
