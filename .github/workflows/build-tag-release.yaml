@@ -1,38 +1,43 @@
-name: bump-version
+name: build-tag-release
+
 on:
   workflow_dispatch:
     inputs:
       bump_type:
-        description: 'Release Type'
+        description: Release Type
         required: true
         type: choice
         options:
           - patch
           - minor
           - major
+      tag_and_release:
+        description: Create tag and release
+        required: true
+        type: boolean
+        default: false
+
 jobs:
-  build-linux-binaries:
-    runs-on: ubuntu-latest
+  build-binaries:
+    strategy:
+      matrix:
+        flavour:
+          - runner: ubuntu-latest
+            os: linux
+          - runner: windows-latest
+            os: windows
+    runs-on: ${{ matrix.flavour.runner }}
     steps:
-      - name: Package Linux application
+      - name: Package ${{ runner.os }} application
         uses: sayyid5416/pyinstaller@v1
         with:
           python_ver: '3.11'
           spec: acestream_search.spec
           requirements: requirements.txt
-          upload_exe_with_name: binaries-linux
-  build-windows-binaries:
-    runs-on: windows-latest
-    steps:
-      - name: Package Windows application
-        uses: sayyid5416/pyinstaller@v1
-        with:
-          python_ver: '3.11'
-          spec: acestream_search.spec
-          requirements: requirements.txt
-          upload_exe_with_name: binaries-windows
+          upload_exe_with_name: binaries-${{ matrix.flavour.os }}
   tag-and-release:
-    needs: [build-linux-binaries, build-windows-binaries]
+    if: ${{ inputs.tag_and_release == true }}
+    needs: build-binaries
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -43,7 +48,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v6.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          default_bump: ${{ github.event.inputs.bump_type}}
+          default_bump: ${{ inputs.bump_type}}
       - uses: actions/download-artifact@v4
       - run: >-
           cd binaries-linux &&
