@@ -44,7 +44,7 @@ The GUI tool will automatically discover Android devices in the local network wi
 $ acestream-search-gui
 ```
 
-![imagen](https://github.com/malomehi/acestream-search/assets/1456960/2116f002-bc08-4896-92e1-8747ac8df86a)
+![imagen](https://github.com/malomehi/acestream-search/assets/1456960/76778d84-dbd3-4eaa-b6a6-a4b9a769596b)
 
 ## Collaborators
 
