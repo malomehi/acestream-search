@@ -102,7 +102,7 @@ def get_events_from_sop(
         acestream_links = []
         game = target['title'].split('\n')[1].strip()
         logger.info(f'Analysing event "{game}"')
-        resp = requests.get(target['url'], verify=False)
+        resp = requests.get(target['url'])
         resp.raise_for_status()
         links_sop = BeautifulSoup(resp.text, 'html.parser')
         acestream_sops = links_sop.findAll(
@@ -150,8 +150,7 @@ def get_events(
             f'the next {hours} hours'
         )
         resp = requests.get(
-            f'{MAIN_URL}/enx/allupcomingsports/{CATEGORIES[category]}/',
-            verify=False
+            f'{MAIN_URL}/enx/allupcomingsports/{CATEGORIES[category]}/'
         )
         resp.raise_for_status()
         if resp.history:
