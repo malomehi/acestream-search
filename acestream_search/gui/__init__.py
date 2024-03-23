@@ -243,5 +243,5 @@ class GuiApp():
         self.root.destroy()
 
     def run(self):
-        threading.Thread(target=self.discover_devices, daemon=True).start()
+        self.start_refresh_adb_thread()
         self.root.mainloop()

@@ -55,15 +55,15 @@ jobs:
           default_bump: ${{ inputs.bump_type}}
       - uses: actions/download-artifact@v4
       - run: >-
-          cd binaries-linux &&
+          cd binaries-linux && cp ../LICENSE ./ &&
           chmod +x acestream-search &&
           chmod +x acestream-search-gui &&
-          tar czvf acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz acestream-search &&
-          tar czvf acestream-search-gui-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz acestream-search-gui
+          tar czvf acestream-search-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz acestream-search LICENSE &&
+          tar czvf acestream-search-gui-linux-binary-${{ steps.tag_version.outputs.new_tag }}.tar.gz acestream-search-gui LICENSE
       - run: >-
-          cd binaries-windows &&
-          zip acestream-search-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip acestream-search.exe &&
-          zip acestream-search-gui-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip acestream-search-gui.exe
+          cd binaries-windows && cp ../LICENSE ./ &&
+          zip acestream-search-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip acestream-search.exe LICENSE &&
+          zip acestream-search-gui-windows-binary-${{ steps.tag_version.outputs.new_tag }}.zip acestream-search-gui.exe LICENSE
       - name: Create a GitHub release
         uses: ncipollo/release-action@v1
         with:
