@@ -1,0 +1,31 @@
+name: update-urls
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  update-urls:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+    - name: Update URLs
+      run: ./update-urls.sh
+    - name: Run URL check script
+      uses: adriancoman/link-checks-action@1.0.1
+      with:
+        file-to-check: acestream_search/common/constants.py
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v5
+      id: auto-commit-action
+      with:
+        commit_message: Update URLs
+    - if: steps.auto-commit-action.outputs.changes_detected == 'true'
+      uses: ./.github/workflows/build-tag-release.yaml
+      with:
+        bump_type: patch
+        tag_and_release: true
+    - if: steps.auto-commit-action.outputs.changes_detected == 'false'
+      run: echo "No changes detected"
