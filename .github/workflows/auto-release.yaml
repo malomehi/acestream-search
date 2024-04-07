@@ -1,0 +1,38 @@
+name: auto-release
+on:
+  push:
+    branches: [master]
+    paths: [acestream_search/common/constants.py]
+
+jobs:
+  changed_files:
+    runs-on: ubuntu-latest
+    name: Test changes
+    outputs:
+      files_with_url_changes_count: ${{ steps.check-changes.outputs.files_with_url_changes_count }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: acestream_search/common/constants.py
+      - name: Check changes
+        id: check-changes
+        run: |
+          if [[ ${{ steps.changed-files.outputs.only_modified }} == true ]]; then
+            echo "files_with_url_changes_count=$(git diff ${{github.event.before}} ${{github.sha}} --name-only -G https:// | wc -l)" >> "$GITHUB_OUTPUT"
+          else
+            echo "files_with_url_changes_count=0" >> "$GITHUB_OUTPUT"
+          fi
+  release:
+    needs: [changed_files]
+    if: needs.changed_files.outputs.files_with_url_changes_count != '0'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/build-tag-release.yaml
+    with:
+      bump_type: patch
+      tag_and_release: true

@@ -16,6 +16,17 @@ on:
         required: true
         type: boolean
         default: false
+  workflow_call:
+    inputs:
+      bump_type:
+        description: Release Type
+        required: true
+        type: string
+      tag_and_release:
+        description: Create tag and release
+        required: true
+        type: boolean
+        default: false
   pull_request:
     branches: master
 
@@ -39,7 +50,7 @@ jobs:
           upload_exe_with_name: binaries-${{ matrix.flavour.os }}
   tag-and-release:
     if: |
-      github.event_name == 'workflow_dispatch' &&
+      (github.event_name == 'workflow_dispatch' || github.event_name == 'push') &&
       inputs.tag_and_release == true
     needs: build-binaries
     permissions:

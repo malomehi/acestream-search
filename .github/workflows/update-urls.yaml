@@ -1,0 +1,26 @@
+name: update-urls
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  update-urls:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ssh-key: ${{secrets.UPDATE_URLS_KEY}}
+    - name: Update URLs
+      run: ./update-urls.sh
+    - name: Run URL check script
+      uses: adriancoman/link-checks-action@1.0.1
+      with:
+        file-to-check: acestream_search/common/constants.py
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v5
+      id: auto-commit-action
+      with:
+        commit_message: Update URLs
