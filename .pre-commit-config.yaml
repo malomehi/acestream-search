@@ -25,3 +25,12 @@ repos:
   rev: '7.0.0'
   hooks:
   - id: flake8
+- repo: https://github.com/python-jsonschema/check-jsonschema
+  rev: 0.28.1
+  hooks:
+    - id: check-github-workflows
+      args: ['--verbose']
+- repo: https://github.com/rhysd/actionlint
+  rev: v1.6.27
+  hooks:
+    - id: actionlint

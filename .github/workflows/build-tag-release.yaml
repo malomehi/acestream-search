@@ -26,9 +26,8 @@ on:
         description: Create tag and release
         required: true
         type: boolean
-        default: false
   pull_request:
-    branches: master
+    branches: [master]
 
 jobs:
   build-binaries:
