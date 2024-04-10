@@ -1,6 +1,7 @@
 import datetime
 import re
 from urllib.parse import urlparse
+from zoneinfo import ZoneInfo
 
 import requests
 from bs4 import BeautifulSoup
@@ -66,7 +67,9 @@ def get_events_from_sop(
         )
     }
     all_targets = {}
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(ZoneInfo('Europe/London'))
+    tzlocal = datetime.datetime.now().astimezone().tzinfo
+
     for event_parent in live_parents.union(alt_parents):
         span = event_parent.find(
             name='span',
@@ -74,7 +77,9 @@ def get_events_from_sop(
         )
         try:
             date_text = span.text.split('\n')[0].rstrip()
-            date = date_parse(date_text)
+            date = date_parse(date_text).replace(
+                tzinfo=ZoneInfo('Europe/London')
+            )
         except Exception:
             continue
         if (date - now) > datetime.timedelta(hours=hours):
@@ -88,7 +93,7 @@ def get_events_from_sop(
         title = '\n'.join([
             event_parent.find(name='img').get('alt'),
             live.text,
-            date_text
+            date.astimezone(tz=tzlocal).strftime('%d %B at %H:%M'),
         ])
         href = MAIN_URL + live.get('href')
         if href not in all_targets:
