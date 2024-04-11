@@ -3,10 +3,15 @@ MAIN_URL = 'https://livetv775.me'
 CATEGORIES = {
     'american_football': 27,
     'athletics': 9,
+    'aussie_rules': 52,
+    'badminton': 31,
     'bandy': 11,
     'baseball': 19,
     'basketball': 3,
     'beach_soccer': 23,
+    'beach_volleyball': 21,
+    'boxing': 6,
+    'climbing': 93,
     'billiard': 29,
     'combat_sport': 75,
     'cricket': 41,
@@ -28,6 +33,8 @@ CATEGORIES = {
     'rugby_union': 33,
     'table_tennis': 39,
     'tennis': 4,
+    'triathlon': 76,
     'volleyball': 5,
+    'water_polo': 22,
     'winter_sport': 18
 }
