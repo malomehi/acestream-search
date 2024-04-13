@@ -6,7 +6,9 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=[
+        'tzdata'
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -41,7 +43,9 @@ b = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=[
+        'tzdata'
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
