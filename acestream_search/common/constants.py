@@ -1,4 +1,4 @@
-MAIN_URL = 'https://livetv778.me'
+MAIN_URL = 'https://livetv779.me'
 
 CATEGORIES = {
     'american_football': 27,
