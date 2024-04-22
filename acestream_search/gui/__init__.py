@@ -6,6 +6,7 @@ import threading
 import tkinter as tk
 import webbrowser
 from functools import partial
+from importlib.metadata import version
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 
@@ -43,7 +44,7 @@ class TextHandler(logging.Handler):
 
 class GuiApp():
     root = tk.Tk()
-    root.title('Acestream Search - GUI')
+    root.title(f'Acestream Search - GUI (v{version("acestream_search")})')
     root.grid_columnconfigure(0, weight=1)
     root.grid_rowconfigure(0, weight=1)
 
