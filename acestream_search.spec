@@ -1,5 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from PyInstaller.utils.hooks import copy_metadata
+
 
 a = Analysis(
     ['acestream_search/acestream_search_launcher.py'],
@@ -40,7 +42,7 @@ b = Analysis(
     ['acestream_search/acestream_search_gui_launcher.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=copy_metadata('acestream_search'),
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
