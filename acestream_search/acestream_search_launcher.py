@@ -25,7 +25,7 @@ def main():
         type=int,
         default=1,
         help='Events starting within the next number of hours. '
-        'Started events are also included (2 hours ago max). '
+        'Started events are also included (3 hours ago max). '
         '(default: 1 hour)'
     )
     parser.add_argument(

@@ -84,7 +84,7 @@ def get_events_from_sop(
             continue
         if (date - now) > datetime.timedelta(hours=hours):
             continue
-        if (now - date) > datetime.timedelta(hours=2):
+        if (now - date) > datetime.timedelta(hours=3):
             continue
         live = event_parent.find(
             name='a',
