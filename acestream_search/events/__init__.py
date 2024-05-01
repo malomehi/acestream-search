@@ -1,16 +1,55 @@
 import datetime
 import re
+import socket
 from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
 import requests
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as date_parse
+from dns import resolver
 from tabulate import tabulate
 
+from acestream_search.common.constants import ALTERNATIVE_URL
 from acestream_search.common.constants import CATEGORIES
 from acestream_search.common.constants import MAIN_URL
 from acestream_search.log import logger
+
+source_url = MAIN_URL
+
+
+def switch_source_url():
+    global source_url
+
+    source_url = ALTERNATIVE_URL
+    logger.warning(f'Not able to connect to main url: {MAIN_URL}')
+    logger.info(f'Using alternative url: {ALTERNATIVE_URL}')
+
+
+def set_source_url():
+    res = resolver.Resolver(configure=False)
+    res.nameservers = ['1.1.1.1', '1.0.0.1']
+    try:
+        ips = list(
+            res.resolve_name(
+                MAIN_URL.split('//')[1], socket.AF_INET
+            ).addresses()
+        )
+    except Exception:
+        switch_source_url()
+        return
+
+    ip = ips[0]
+
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(1)
+            s.connect((ip, 443))
+            logger.info(f'Using main url: {MAIN_URL}')
+    except Exception:
+        switch_source_url()
+    finally:
+        s.close()
 
 
 def get_events_table(events: list):
@@ -95,7 +134,7 @@ def get_events_from_sop(
             live.text,
             date.astimezone(tz=tzlocal).strftime('%d %B at %H:%M'),
         ])
-        href = MAIN_URL + live.get('href')
+        href = source_url + live.get('href')
         if href not in all_targets:
             all_targets[href] = {
                 'title': title, 'date': date,
@@ -144,6 +183,10 @@ def get_events(
     text: str, hours: int, category: str,
     show_empty: bool, include_android=False
 ):
+    global source_url
+
+    set_source_url()
+
     search_text = f'with text "{text}" ' if text else ''
     categories = [category] if category else CATEGORIES.keys()
 
@@ -155,12 +198,15 @@ def get_events(
             f'the next {hours} hours'
         )
         resp = requests.get(
-            f'{MAIN_URL}/enx/allupcomingsports/{CATEGORIES[category]}/'
+            f'{source_url}/enx/allupcomingsports/{CATEGORIES[category]}/'
         )
         resp.raise_for_status()
         if resp.history:
-            main_url = 'https://' + urlparse(resp.url).netloc
-            logger.warning(f'Main url has changed to "{main_url}"')
+            new_url = 'https://' + urlparse(resp.url).netloc
+            logger.warning(
+                f'Source url has changed from "{source_url}" to "{new_url}"'
+            )
+            source_url = new_url
         main_sop = BeautifulSoup(resp.text, 'html.parser')
 
         events.extend(
