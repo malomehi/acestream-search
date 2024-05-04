@@ -41,15 +41,17 @@ def set_source_url():
 
     ip = ips[0]
 
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
             s.settimeout(1)
             s.connect((ip, 443))
+            test_request = requests.get(f'{MAIN_URL}/enx/allupcomingsports/')
+            test_request.raise_for_status()
             logger.info(f'Using main url: {MAIN_URL}')
-    except Exception:
-        switch_source_url()
-    finally:
-        s.close()
+        except Exception:
+            switch_source_url()
+        finally:
+            s.close()
 
 
 def get_events_table(events: list):
