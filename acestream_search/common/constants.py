@@ -1,5 +1,5 @@
 MAIN_URL = 'https://livetv.sx'
-ALTERNATIVE_URL = 'https://livetv782.me'
+ALTERNATIVE_URL = 'https://livetv783.me'
 
 CATEGORIES = {
     'american_football': 27,
