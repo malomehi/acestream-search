@@ -1,5 +1,6 @@
-MAIN_URL = 'https://livetv.sx'
-ALTERNATIVE_URL = 'https://livetv786.me'
+EVENTS_URL = 'https://livetv.sx'
+ALTERNATIVE_EVENTS_URL = 'https://livetv786.me'
+CHANNELS_URL = 'https://viendoelfutbolporlaface.pages.dev'
 
 CATEGORIES = {
     'american_football': 27,

@@ -10,20 +10,20 @@ from dateutil.parser import parse as date_parse
 from dns import resolver
 from tabulate import tabulate
 
-from acestream_search.common.constants import ALTERNATIVE_URL
+from acestream_search.common.constants import ALTERNATIVE_EVENTS_URL
 from acestream_search.common.constants import CATEGORIES
-from acestream_search.common.constants import MAIN_URL
+from acestream_search.common.constants import EVENTS_URL
 from acestream_search.log import logger
 
-source_url = MAIN_URL
+source_url = EVENTS_URL
 
 
 def switch_source_url():
     global source_url
 
-    source_url = ALTERNATIVE_URL
-    logger.warning(f'Not able to connect to main url: {MAIN_URL}')
-    logger.info(f'Using alternative url: {ALTERNATIVE_URL}')
+    source_url = ALTERNATIVE_EVENTS_URL
+    logger.warning(f'Not able to connect to main url: {EVENTS_URL}')
+    logger.info(f'Using alternative url: {ALTERNATIVE_EVENTS_URL}')
 
 
 def set_source_url():
@@ -32,7 +32,7 @@ def set_source_url():
     try:
         ips = list(
             res.resolve_name(
-                MAIN_URL.split('//')[1], socket.AF_INET
+                EVENTS_URL.split('//')[1], socket.AF_INET
             ).addresses()
         )
     except Exception:
@@ -45,9 +45,9 @@ def set_source_url():
         try:
             s.settimeout(1)
             s.connect((ip, 443))
-            test_request = requests.get(f'{MAIN_URL}/enx/allupcomingsports/')
+            test_request = requests.get(f'{EVENTS_URL}/enx/allupcomingsports/')
             test_request.raise_for_status()
-            logger.info(f'Using main url: {MAIN_URL}')
+            logger.info(f'Using main url: {EVENTS_URL}')
         except Exception:
             switch_source_url()
         finally:
