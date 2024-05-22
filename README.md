@@ -34,6 +34,8 @@ $
 
 The GUI Tool, from version `v0.0.9` onwards, has an extra feature to send the links to remote Android devices (e.g. Android TV, Fire TV Stick, etc.). It can also send the links to the local device where the application is running.
 
+Versions from `v2.0.0` onwards also include an experimental feature to search for channels and present them all in the results window.
+
 In order to use these features, the local device (where the application runs) must have the Ace Stream application installed and Adroid devices (remote devices) must have remote ADB debugging enabled and the Ace Stream application installed.
 
 You can google how to achieve the above.
@@ -44,7 +46,7 @@ The GUI tool will automatically discover Android devices in the local network wi
 $ acestream-search-gui
 ```
 
-![imagen](https://github.com/malomehi/acestream-search/assets/1456960/76778d84-dbd3-4eaa-b6a6-a4b9a769596b)
+![imagen](https://github.com/malomehi/acestream-search/assets/1456960/c30b4e3b-ab2e-4da6-822f-6dba12048294)
 
 ## Collaborators
 

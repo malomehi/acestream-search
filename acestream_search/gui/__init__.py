@@ -12,6 +12,8 @@ from tkinter.scrolledtext import ScrolledText
 from acestream_search.adb import Client
 from acestream_search.adb.discover import discover_adb_devices
 from acestream_search.adb.server import run_adb_command
+from acestream_search.channels import get_channels
+from acestream_search.channels import get_channels_table
 from acestream_search.common.constants import CATEGORIES
 from acestream_search.events import get_events
 from acestream_search.events import get_events_table
@@ -109,25 +111,33 @@ class GuiApp():
     show_empty_checkbox.grid(row=6, column=0, sticky=tk.W)
 
     result_label = ttk.Label(main_frame, text='Results:')
-    result_label.grid(row=8, column=0, sticky=tk.W)
+    result_label.grid(row=9, column=0, sticky=tk.W)
 
     # Create a ScrolledText with horizontal scrolling
     result_text = ScrolledText(
         main_frame, width=155, height=20, wrap=tk.WORD, font=('Courier', 9)
     )
-    result_text.grid(row=9, column=0, columnspan=4, pady=5, sticky=tk.NSEW)
+    result_text.grid(row=10, column=0, columnspan=4, pady=5, sticky=tk.NSEW)
     result_text.config(state=tk.DISABLED, foreground='blue3')
 
     adb_client = Client()
 
     def __init__(self):
-        self.search_button = ttk.Button(
+        self.search_events_button = ttk.Button(
             self.main_frame,
-            text='Search Streams',
-            command=self.start_search_thread
+            text='Search Events Streams',
+            command=self.start_search_events_thread
         )
-        self.search_button.grid(
+        self.search_events_button.grid(
             row=7, column=0, columnspan=4, pady=5, sticky=(tk.EW)
+        )
+        self.search_channels_button = ttk.Button(
+            self.main_frame,
+            text='Search Channels Streams (Experimental)',
+            command=self.start_search_channels_thread
+        )
+        self.search_channels_button.grid(
+            row=8, column=0, columnspan=4, pady=5, sticky=(tk.EW)
         )
         self.refresh_adb_button = ttk.Button(
             self.main_frame,
@@ -156,8 +166,37 @@ class GuiApp():
             args=(self.ip_var.get(), link)
         ).start()
 
-    def search_streams(self):
-        """Function to initiate the search process."""
+    def show_results(self, table):
+        """Function to show the results in the results window."""
+
+        chunks = re.split(
+            '(acestream:\\/\\/\\S+ \\(Play on Android\\))',
+            table
+        )
+        self.result_text.config(state=tk.NORMAL)
+        self.result_text.insert(tk.END, '\n')
+        hyperlinks = HyperlinkManager(self.result_text)
+        for chunk in chunks:
+            if chunk.startswith('acestream://'):
+                link = chunk.split()[0]
+                self.result_text.insert(
+                    tk.END,
+                    link,
+                    hyperlinks.add(partial(webbrowser.open, link))
+                )
+                self.result_text.insert(tk.END, ' ')
+                self.result_text.insert(
+                    tk.END,
+                    '(Play on Android)',
+                    hyperlinks.add(partial(self.play_on_android, link))
+                )
+            else:
+                self.result_text.insert(tk.END, chunk)
+        self.result_text.insert(tk.END, '\n')
+        self.result_text.config(state=tk.DISABLED)
+
+    def search_events_streams(self):
+        """Function to initiate the events search process."""
 
         # Clear the result_text widget
         self.result_text.config(state=tk.NORMAL)
@@ -183,44 +222,51 @@ class GuiApp():
         search_text = self.search_entry.get()
         show_empty = self.show_empty_var.get()
 
-        # Disable the button while search is in progress
-        self.search_button.config(state=tk.DISABLED)
+        # Disable the buttons while search is in progress
+        self.search_events_button.config(state=tk.DISABLED)
+        self.search_channels_button.config(state=tk.DISABLED)
 
         events = get_events(search_text, hours, category, show_empty, True)
         table = get_events_table(events)
 
         if table:
-            chunks = re.split(
-                '(acestream:\\/\\/\\S+ \\(Play on Android\\))',
-                table
-            )
-            self.result_text.config(state=tk.NORMAL)
-            self.result_text.insert(tk.END, '\n')
-            hyperlinks = HyperlinkManager(self.result_text)
-            for chunk in chunks:
-                if chunk.startswith('acestream://'):
-                    link = chunk.split()[0]
-                    self.result_text.insert(
-                        tk.END,
-                        link,
-                        hyperlinks.add(partial(webbrowser.open, link))
-                    )
-                    self.result_text.insert(tk.END, ' ')
-                    self.result_text.insert(
-                        tk.END,
-                        '(Play on Android)',
-                        hyperlinks.add(partial(self.play_on_android, link))
-                    )
-                else:
-                    self.result_text.insert(tk.END, chunk)
-            self.result_text.insert(tk.END, '\n')
-            self.result_text.config(state=tk.DISABLED)
+            self.show_results(table)
 
-        # Enable the button after the search is finished
-        self.search_button.config(state=tk.NORMAL)
+        # Enable the buttons after the search is finished
+        self.search_events_button.config(state=tk.NORMAL)
+        self.search_channels_button.config(state=tk.NORMAL)
 
-    def start_search_thread(self):
-        threading.Thread(target=self.search_streams, daemon=True).start()
+    def search_channels_streams(self):
+        """Function to initiate the channels search process."""
+
+        # Clear the result_text widget
+        self.result_text.config(state=tk.NORMAL)
+        self.result_text.delete('1.0', tk.END)
+        self.result_text.config(state=tk.DISABLED)
+
+        # Disable the buttons while search is in progress
+        self.search_events_button.config(state=tk.DISABLED)
+        self.search_channels_button.config(state=tk.DISABLED)
+
+        events = get_channels(include_android=True)
+        table = get_channels_table(events)
+
+        if table:
+            self.show_results(table)
+
+        # Enable the buttons after the search is finished
+        self.search_events_button.config(state=tk.NORMAL)
+        self.search_channels_button.config(state=tk.NORMAL)
+
+    def start_search_events_thread(self):
+        threading.Thread(
+            target=self.search_events_streams, daemon=True
+        ).start()
+
+    def start_search_channels_thread(self):
+        threading.Thread(
+            target=self.search_channels_streams, daemon=True
+        ).start()
 
     def start_refresh_adb_thread(self):
         threading.Thread(target=self.discover_devices, daemon=True).start()
