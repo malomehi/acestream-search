@@ -33,7 +33,7 @@ def get_channels(url=CHANNELS_URL, include_android=False):
         logger.warning(
             f'Source url has changed from "{url}" to "{new_url}"'
         )
-        return get_channels(new_url)
+        return get_channels(new_url, include_android)
     main_sop = BeautifulSoup(resp.text, 'html.parser')
     pattern = re.compile('acestream://')
     android = ' (Play on Android)'
