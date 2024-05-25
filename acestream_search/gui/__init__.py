@@ -52,7 +52,7 @@ class GuiApp():
     main_frame = ttk.Frame(root, padding='20')
     main_frame.grid(row=0, column=0, sticky=(tk.NSEW))
     main_frame.columnconfigure(3, weight=1)
-    main_frame.rowconfigure(9, weight=1)
+    main_frame.rowconfigure(10, weight=1)
 
     log_label = ttk.Label(main_frame, text='Console:')
     log_label.grid(row=0, column=0, sticky=tk.W)  # Place log label in row 0
