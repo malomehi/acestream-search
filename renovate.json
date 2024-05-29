@@ -4,9 +4,25 @@
     "config:base"
   ],
   "gitIgnoredAuthors": ["66853113+pre-commit-ci[bot]@users.noreply.github.com"],
+  "labels": ["renovate"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["patch"],
+      "addLabels": ["update-patch"],
+      "automerge": true
+    },
+    {
+      "matchUpdateTypes": ["minor"],
+      "addLabels": ["update-minor"]
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "addLabels": ["update-major"]
+    }
+  ],
   "vulnerabilityAlerts": {
     "enabledManagers": ["github-actions", "pip_requirements"],
-    "labels": ["security"],
+    "addLabels": ["security"],
     "automerge": true
   }
 }
