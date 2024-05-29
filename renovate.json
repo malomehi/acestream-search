@@ -21,7 +21,6 @@
     }
   ],
   "vulnerabilityAlerts": {
-    "enabledManagers": ["github-actions", "pip_requirements"],
     "addLabels": ["security"],
     "automerge": true
   }
