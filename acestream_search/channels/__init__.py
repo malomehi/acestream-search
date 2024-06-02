@@ -47,4 +47,4 @@ def get_channels(url=CHANNELS_URL, include_android=False):
             name='a', attrs={'href': pattern}, recursive=False
         )
     ]
-    return channels
+    return sorted(channels, key=lambda x: x['name'])
