@@ -10,7 +10,7 @@ repos:
   - id: double-quote-string-fixer
   - id: requirements-txt-fixer
 - repo: https://github.com/asottile/reorder-python-imports
-  rev: v3.12.0
+  rev: v3.13.0
   hooks:
   - id: reorder-python-imports
 - repo: https://github.com/asottile/pyupgrade
@@ -31,10 +31,10 @@ repos:
     - id: check-github-workflows
       args: ['--verbose']
 - repo: https://github.com/rhysd/actionlint
-  rev: v1.7.0
+  rev: v1.7.1
   hooks:
     - id: actionlint
 - repo: https://github.com/renovatebot/pre-commit-hooks
-  rev: 37.381.9
+  rev: 37.387.2
   hooks:
     - id: renovate-config-validator
