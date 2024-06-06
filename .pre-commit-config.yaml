@@ -2,6 +2,11 @@ ci:
   skip: [python-safety-dependencies-check]
 
 repos:
+- repo: https://github.com/Yelp/detect-secrets
+  rev: v1.5.0
+  hooks:
+  -   id: detect-secrets
+      args: ['--baseline', '.secrets.baseline']
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.6.0
   hooks:
