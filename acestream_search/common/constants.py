@@ -1,5 +1,5 @@
 EVENTS_URL = 'https://livetv.sx'
-ALTERNATIVE_EVENTS_URL = 'https://livetv791.me'
+ALTERNATIVE_EVENTS_URL = 'https://livetv792.me'
 CHANNELS_URL = 'https://viendoelfutbolporlaface.pages.dev'
 
 CATEGORIES = {
