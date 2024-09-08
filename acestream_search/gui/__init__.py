@@ -1,5 +1,6 @@
 import logging
 import os
+import pkgutil
 import re
 import shutil
 import threading
@@ -48,6 +49,9 @@ class GuiApp():
     root.title('Acestream Search - GUI')
     root.grid_columnconfigure(0, weight=1)
     root.grid_rowconfigure(0, weight=1)
+
+    icon_bin = pkgutil.get_data('acestream_search.gui', 'resources/tv.png')
+    root.iconphoto(False, tk.PhotoImage(data=icon_bin))
 
     main_frame = ttk.Frame(root, padding='20')
     main_frame.grid(row=0, column=0, sticky=(tk.NSEW))
@@ -133,7 +137,7 @@ class GuiApp():
         )
         self.search_channels_button = ttk.Button(
             self.main_frame,
-            text='Search Channels Streams (Experimental)',
+            text='Search Channels Streams',
             command=self.start_search_channels_thread
         )
         self.search_channels_button.grid(

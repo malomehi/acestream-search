@@ -40,7 +40,9 @@ b = Analysis(
     ['acestream_search/acestream_search_gui_launcher.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[
+        ('acestream_search/gui/resources', 'acestream_search/gui/resources')
+    ],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -63,10 +65,11 @@ exe_b = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='acestream_search/gui/resources/tv.ico'
 )

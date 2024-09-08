@@ -18,6 +18,7 @@ setup(
     setuptools_git_versioning={
         'enabled': True,
     },
+    package_data={'acestream_search.gui': ['resources/*']},
     packages=find_packages(),
     project_urls={
         'Bug Reports': 'https://github.com/malomehi/acestream-search/issues',
