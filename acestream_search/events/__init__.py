@@ -60,7 +60,7 @@ def get_events_table(events: list):
             e['title'], e['category'],
             *get_events_extra_columns(e)
         ] for e in sorted(
-            events, key=lambda x: (x['date'], x['category'])
+            events, key=lambda x: (x['date'], x['category'], x['title'])
         ) if e['links']
     ]
     if not table:
