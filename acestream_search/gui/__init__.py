@@ -45,8 +45,8 @@ class TextHandler(logging.Handler):
 
 
 class GuiApp():
-    root = tk.Tk()
-    root.title('Acestream Search - GUI')
+    root = tk.Tk(className='acestream-search-gui')
+    root.title('Acestream Search GUI')
     root.grid_columnconfigure(0, weight=1)
     root.grid_rowconfigure(0, weight=1)
 
