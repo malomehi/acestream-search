@@ -30,7 +30,7 @@ class CustomFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-logger = logging.getLogger()
+logger = logging.getLogger('acestream_search')
 logger.setLevel(logging.INFO)
 
 ch = logging.StreamHandler()
