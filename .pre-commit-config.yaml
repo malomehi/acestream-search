@@ -31,15 +31,15 @@ repos:
   hooks:
   - id: flake8
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.29.2
+  rev: 0.29.3
   hooks:
     - id: check-github-workflows
       args: ['--verbose']
 - repo: https://github.com/rhysd/actionlint
-  rev: v1.7.2
+  rev: v1.7.3
   hooks:
     - id: actionlint
 - repo: https://github.com/renovatebot/pre-commit-hooks
-  rev: 38.94.1
+  rev: 38.105.0
   hooks:
     - id: renovate-config-validator
