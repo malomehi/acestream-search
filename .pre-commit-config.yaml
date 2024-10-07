@@ -8,7 +8,7 @@ repos:
   -   id: detect-secrets
       args: ['--baseline', '.secrets.baseline']
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.6.0
+  rev: v5.0.0
   hooks:
   - id: check-yaml
   - id: check-ast
@@ -40,6 +40,6 @@ repos:
   hooks:
     - id: actionlint
 - repo: https://github.com/renovatebot/pre-commit-hooks
-  rev: 38.105.0
+  rev: 38.110.3
   hooks:
     - id: renovate-config-validator
