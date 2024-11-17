@@ -1,9 +1,11 @@
+import asyncio
 import datetime
 import re
 import socket
 from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
+import aiohttp
 import requests
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as date_parse
@@ -143,42 +145,63 @@ def get_events_from_sop(
                 'url': href, 'category': category.title().replace('_', ' ')
             }
 
-    pattern = re.compile(r'acestream://')
-    for target in all_targets.values():
-        acestream_links = []
-        game = target['title'].split('\n')[1].strip()
-        logger.info(f'Analysing event "{game}"')
-        resp = requests.get(target['url'])
-        resp.raise_for_status()
-        links_sop = BeautifulSoup(resp.text, 'html.parser')
-        acestream_sops = links_sop.findAll(
-            name='a', attrs={'href': pattern}
-        )
-        for acestream_sop in acestream_sops:
-            link_parent = acestream_sop.parent.parent
-            language = link_parent.find(name='img').get(
-                'title'
-            ) or 'Unknown'
-            bitrate = link_parent.find(
-                name='td', attrs={'class': 'bitrate'}
-            ).text or 'Unknown'
-            url = acestream_sop.get('href')
-            if include_android:
-                url += ' (Play on Android)'
-            acestream_links.append(
-                {'url': url, 'language': language, 'bitrate': bitrate}
-            )
-        target['links'] = sorted(
-            acestream_links, key=lambda x: (x['language'], x['bitrate'])
-        ) or (
-            [{
-                'url': 'No acestream links available at the moment',
-                'language': '-',
-                'bitrate': '-'
-            }] if show_empty else None
-        )
+    asyncio.run(
+        process_targets(all_targets.values(), show_empty, include_android)
+    )
 
     return all_targets.values()
+
+
+async def process_targets(targets, show_empty: bool, include_android: bool):
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for target in targets:
+            tasks.append(
+                process_target(
+                    session, target, show_empty, include_android
+                )
+            )
+            game = target['title'].split('\n')[1].strip()
+            logger.info(f'Analysing event "{game}"')
+
+        if tasks:
+            logger.info('Waiting for results')
+        await asyncio.gather(*tasks)
+
+
+async def process_target(
+    session, target, show_empty: bool, include_android: bool
+):
+    pattern = re.compile(r'acestream://')
+    acestream_links = []
+    async with session.get(target['url']) as resp:
+        links_sop = BeautifulSoup(await resp.text(), 'html.parser')
+    acestream_sops = links_sop.findAll(
+        name='a', attrs={'href': pattern}
+    )
+    for acestream_sop in acestream_sops:
+        link_parent = acestream_sop.parent.parent
+        language = link_parent.find(name='img').get(
+            'title'
+        ) or 'Unknown'
+        bitrate = link_parent.find(
+            name='td', attrs={'class': 'bitrate'}
+        ).text or 'Unknown'
+        url = acestream_sop.get('href')
+        if include_android:
+            url += ' (Play on Android)'
+        acestream_links.append(
+            {'url': url, 'language': language, 'bitrate': bitrate}
+        )
+    target['links'] = sorted(
+        acestream_links, key=lambda x: (x['language'], x['bitrate'])
+    ) or (
+        [{
+            'url': 'No acestream links available at the moment',
+            'language': '-',
+            'bitrate': '-'
+        }] if show_empty else None
+    )
 
 
 def get_events(
