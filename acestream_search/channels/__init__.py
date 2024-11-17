@@ -1,3 +1,4 @@
+import json
 import re
 from urllib.parse import urlparse
 
@@ -35,16 +36,18 @@ def get_channels(url=CHANNELS_URL, include_android=False):
         )
         return get_channels(new_url, include_android)
     main_sop = BeautifulSoup(resp.text, 'html.parser')
-    pattern = re.compile('acestream://')
+    pattern = re.compile('acestream://.+')
     android = ' (Play on Android)'
+
+    links = json.loads(
+        main_sop.find(name='script').text.split('=')[1].split(';')[0]
+    )['links']
+
     channels = [
         {
-            'name': a.text,
-            'link': f'{a.get("href")}{android if include_android else ""}'
+            'name': link['name'],
+            'link': f'{link['url']}{android if include_android else ""}'
         }
-        for sop in main_sop.find_all(name='div', attrs={'class': 'b-c'})
-        for a in sop.find_all(
-            name='a', attrs={'href': pattern}, recursive=False
-        )
+        for link in links if pattern.match(link['url'])
     ]
     return sorted(channels, key=lambda x: x['name'])

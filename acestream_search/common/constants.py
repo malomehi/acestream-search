@@ -1,6 +1,6 @@
 EVENTS_URL = 'https://livetv.sx'
 ALTERNATIVE_EVENTS_URL = 'https://livetv817.me'
-CHANNELS_URL = 'https://viendoelfutbolporlaface.pages.dev'
+CHANNELS_URL = 'https://ipfs.io/ipns/elcano.top'
 
 CATEGORIES = {
     'american_football': 27,
