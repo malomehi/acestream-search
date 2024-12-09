@@ -1,5 +1,5 @@
 ci:
-  skip: [python-safety-dependencies-check, renovate-config-validator]
+  skip: [python-safety-dependencies-check]
 
 repos:
 - repo: https://github.com/Yelp/detect-secrets
