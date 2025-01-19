@@ -28,6 +28,33 @@ def switch_source_url():
     logger.info(f'Using alternative url: {ALTERNATIVE_EVENTS_URL}')
 
 
+def get_events_timezone():
+    test_request = requests.get(f'{source_url}/enx/')
+    test_request.raise_for_status()
+    sop = BeautifulSoup(test_request.text, 'html.parser')
+    try:
+        server_time_offset = sop.find(
+            attrs={
+                'class': 'small',
+                'href': '/enx/userinfoedit/#timezone'
+            }
+        ).text.split('UTC')[-1].strip() or '0'
+        tz = datetime.timezone(
+            datetime.timedelta(hours=float(server_time_offset))
+        )
+        return tz
+    except Exception:
+        logger.warning(
+            'Not able to retrieve events time zone from the server. '
+            'Assuming Europe/London time zone.'
+        )
+        return datetime.timezone(
+            datetime.datetime.now(
+                tz=ZoneInfo('Europe/London')
+            ).utcoffset()
+        )
+
+
 def set_source_url():
     res = resolver.Resolver(configure=False)
     res.nameservers = ['1.1.1.1', '1.0.0.1']
@@ -93,7 +120,7 @@ def get_events_extra_columns(event: dict):
 def get_events_from_sop(
     category_sop: BeautifulSoup, text: str,
     hours: int, category: str, show_empty: bool,
-    include_android: bool
+    include_android: bool, events_timezone: datetime.timezone
 ):
     pattern = re.compile(text, re.IGNORECASE)
     live_parents = {
@@ -110,7 +137,7 @@ def get_events_from_sop(
         )
     }
     all_targets = {}
-    now = datetime.datetime.now(ZoneInfo('Europe/London'))
+    now = datetime.datetime.now(events_timezone)
     tzlocal = datetime.datetime.now().astimezone().tzinfo
 
     for event_parent in live_parents.union(alt_parents):
@@ -121,7 +148,7 @@ def get_events_from_sop(
         try:
             date_text = span.text.split('\n')[0].rstrip()
             date = date_parse(date_text).replace(
-                tzinfo=ZoneInfo('Europe/London')
+                tzinfo=events_timezone
             )
         except Exception:
             continue
@@ -211,6 +238,7 @@ def get_events(
     global source_url
 
     set_source_url()
+    events_timezone = get_events_timezone()
 
     search_text = f'with text "{text}" ' if text else ''
     categories = [category] if category else CATEGORIES.keys()
@@ -237,7 +265,7 @@ def get_events(
         events.extend(
             get_events_from_sop(
                 main_sop, text, hours, category,
-                show_empty, include_android
+                show_empty, include_android, events_timezone
             )
         )
 
