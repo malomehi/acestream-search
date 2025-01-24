@@ -19,6 +19,7 @@ CATEGORIES = {
     'cricket': 41,
     'cycling': 40,
     'darts': 30,
+    'e_sports': 74,
     'field_hockey': 38,
     'floorball': 32,
     'football': 1,
@@ -26,6 +27,7 @@ CATEGORIES = {
     'golf': 37,
     'handball': 13,
     'ice_hockey': 2,
+    'lacrosse': 42,
     'mma': 110,
     'netball': 96,
     'padel_tennis': 71,
@@ -38,5 +40,6 @@ CATEGORIES = {
     'triathlon': 76,
     'volleyball': 5,
     'water_polo': 22,
+    'water_sports': 46,
     'winter_sport': 18
 }
