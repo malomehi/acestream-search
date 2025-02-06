@@ -1,5 +1,5 @@
 adb-shell==0.4.4
-aiohttp==3.11.11
+aiohttp==3.11.12
 bs4==0.0.2
 dnspython==2.7.0
 portscan==1.1
