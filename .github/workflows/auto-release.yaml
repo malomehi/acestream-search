@@ -23,7 +23,7 @@ jobs:
         id: check-changes
         run: |
           if [[ ${{ steps.changed-files.outputs.only_modified }} == true ]]; then
-            echo "files_with_url_changes_count=$(git diff ${{github.event.before}} ${{github.sha}} --name-only -G https:// | wc -l)" >> "$GITHUB_OUTPUT"
+            echo "files_with_url_changes_count=$(git diff ${{github.event.before}} ${{github.sha}} --name-only -G https:// acestream_search/common/constants.py | wc -l)" >> "$GITHUB_OUTPUT"
           else
             echo "files_with_url_changes_count=0" >> "$GITHUB_OUTPUT"
           fi
