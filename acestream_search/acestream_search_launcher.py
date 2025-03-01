@@ -9,7 +9,7 @@ def main():
     parser.add_argument(
         '--category',
         type=str,
-        choices=CATEGORIES.keys(),
+        choices=sorted(CATEGORIES.keys()),
         default=None,
         help='Event category (default: all)'
     )

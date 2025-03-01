@@ -74,7 +74,7 @@ class GuiApp():
     category_label = ttk.Label(main_frame, text='Category:')
     category_label.grid(row=2, column=0, sticky=tk.W)
 
-    categories = ['All'] + list(CATEGORIES.keys())
+    categories = ['All'] + sorted(CATEGORIES.keys())
 
     category_var = tk.StringVar()
     category_combobox = ttk.Combobox(
