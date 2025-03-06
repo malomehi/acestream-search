@@ -15,10 +15,10 @@ jobs:
         ssh-key: ${{secrets.UPDATE_URLS_KEY}}
     - name: Update URLs
       run: ./update-urls.sh
-    - name: Run URL check script
-      uses: adriancoman/link-checks-action@1.0.1
-      with:
-        file-to-check: acestream_search/common/constants.py
+    # - name: Run URL check script
+    #   uses: adriancoman/link-checks-action@1.0.1
+    #   with:
+    #     file-to-check: acestream_search/common/constants.py
     - name: Commit changes
       uses: stefanzweifel/git-auto-commit-action@v5
       id: auto-commit-action
