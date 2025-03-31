@@ -27,11 +27,11 @@ repos:
   hooks:
   - id: python-safety-dependencies-check
 - repo: https://github.com/pycqa/flake8
-  rev: '7.1.2'
+  rev: '7.2.0'
   hooks:
   - id: flake8
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.31.3
+  rev: 0.32.1
   hooks:
     - id: check-github-workflows
       args: ['--verbose']
@@ -40,6 +40,6 @@ repos:
   hooks:
     - id: actionlint
 - repo: https://github.com/renovatebot/pre-commit-hooks
-  rev: 39.213.0
+  rev: 39.227.1
   hooks:
     - id: renovate-config-validator
