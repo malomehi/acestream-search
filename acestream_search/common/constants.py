@@ -1,5 +1,5 @@
 EVENTS_URL = 'https://livetv.sx'
-ALTERNATIVE_EVENTS_URL = 'https://livetv822.me'
+ALTERNATIVE_EVENTS_URL = 'https://livetv823.me'
 CHANNELS_URL = 'https://ipfs.io/ipns/elcano.top'
 
 CATEGORIES = {
