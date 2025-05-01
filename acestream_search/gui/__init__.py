@@ -16,8 +16,7 @@ from acestream_search.adb.server import run_adb_command
 from acestream_search.channels import get_channels
 from acestream_search.channels import get_channels_table
 from acestream_search.common.constants import CATEGORIES
-from acestream_search.events import get_events
-from acestream_search.events import get_events_table
+from acestream_search.events import EventManager
 from acestream_search.gui.hyperlink import HyperlinkManager
 from acestream_search.log import FORMAT
 from acestream_search.log import logger
@@ -45,6 +44,8 @@ class TextHandler(logging.Handler):
 
 
 class GuiApp():
+    em = EventManager()
+
     root = tk.Tk(className='acestream-search-gui')
     root.title('Acestream Search GUI')
     root.grid_columnconfigure(0, weight=1)
@@ -230,15 +231,21 @@ class GuiApp():
         self.search_events_button.config(state=tk.DISABLED)
         self.search_channels_button.config(state=tk.DISABLED)
 
-        events = get_events(search_text, hours, category, show_empty, True)
-        table = get_events_table(events)
+        try:
+            # Set source url for events
+            self.em.set_source_url()
+            if self.em.url_verified:
+                events = self.em.get_events(
+                    search_text, hours, category, show_empty, True
+                )
+                table = self.em.get_events_table(events)
 
-        if table:
-            self.show_results(table)
-
-        # Enable the buttons after the search is finished
-        self.search_events_button.config(state=tk.NORMAL)
-        self.search_channels_button.config(state=tk.NORMAL)
+                if table:
+                    self.show_results(table)
+        finally:
+            # Enable the buttons after the search is finished
+            self.search_events_button.config(state=tk.NORMAL)
+            self.search_channels_button.config(state=tk.NORMAL)
 
     def search_channels_streams(self):
         """Function to initiate the channels search process."""
@@ -287,6 +294,8 @@ class GuiApp():
             logger.info(
                 f'Deleted temp directory with adb binary "{temp_dir}"'
             )
+        if self.em.url_verified and isinstance(self.em.verify, str):
+            os.remove(self.em.verify)
 
     def window_exit(self):
         self.cleanup()
