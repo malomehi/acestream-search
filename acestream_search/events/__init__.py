@@ -78,8 +78,10 @@ class EventManager():
                 logger.info('creating aia session')
                 try:
                     aia_session = AIASession()
-                except Exception as e:
-                    logger.info(f'exception: {e}')
+                except Exception as ex:
+                    template = 'Type {0} occurred. Arguments:\n{1!r}'
+                    message = template.format(type(ex).__name__, ex.args)
+                    logger.info(message)
                 logger.info('reading ca data')
                 cadata = aia_session.cadata_from_url(self.source_url)
                 with NamedTemporaryFile('w', delete=False) as pem_file:
