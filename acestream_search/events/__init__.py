@@ -76,7 +76,10 @@ class EventManager():
                     f'SSL error reported for url: {self.source_url}'
                 )
                 logger.info('creating aia session')
-                aia_session = AIASession()
+                try:
+                    aia_session = AIASession()
+                except Exception as e:
+                    logger.info(f'exception: {e}')
                 logger.info('reading ca data')
                 cadata = aia_session.cadata_from_url(self.source_url)
                 with NamedTemporaryFile('w', delete=False) as pem_file:
