@@ -76,21 +76,20 @@ class EventManager():
                     f'SSL error reported for url: {self.source_url}'
                 )
                 logger.info('creating aia session')
-                try:
-                    aia_session = AIASession()
-                except Exception as e:
-                    logger.info(f'exception: {e}')
+                aia_session = AIASession()
                 logger.info('reading ca data')
-                cadata = aia_session.cadata_from_url(self.source_url)
+                try:
+                    cadata = aia_session.cadata_from_url(self.source_url)
+                except ssl.SSLError:
+                    logger.warning('validation of ca data failed')
+                    return
                 with NamedTemporaryFile('w', delete=False) as pem_file:
-                    logger.info('creating temp ca data file')
                     pem_file.write(cadata)
                     pem_file.flush()
                     self.verify = pem_file.name
-                    self.context = ssl.create_default_context(
-                        cafile=self.verify
+                    self.context = aia_session.ssl_context_from_url(
+                        self.source_url
                     )
-                    logger.info(f'pem file: {pem_file.name}')
             finally:
                 s.close()
         self.url_verified = True
