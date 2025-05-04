@@ -6,7 +6,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=['certifi'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -43,7 +43,7 @@ b = Analysis(
     datas=[
         ('acestream_search/gui/resources', 'acestream_search/gui/resources')
     ],
-    hiddenimports=[],
+    hiddenimports=['certifi'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

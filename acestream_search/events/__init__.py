@@ -9,8 +9,10 @@ from urllib.parse import urlparse
 from zoneinfo import ZoneInfo
 
 import aiohttp
+import certifi
 import requests
-from aia import AIASession
+from aia_chaser import AiaChaser
+from aia_chaser.utils.cert_utils import certificates_to_pem
 from bs4 import BeautifulSoup
 from dateutil.parser import parse as date_parse
 from dns import resolver
@@ -76,23 +78,26 @@ class EventManager():
                     f'SSL error reported for url: {self.source_url}'
                 )
                 logger.info('creating aia session')
+                logger.info(f'certs path: {certifi.where()}')
                 try:
-                    aia_session = AIASession()
+                    chaser = AiaChaser()
                 except Exception as ex:
                     template = 'Type {0} occurred. Arguments:\n{1!r}'
                     message = template.format(type(ex).__name__, ex.args)
                     logger.info(message)
                 logger.info('reading ca data')
-                cadata = aia_session.cadata_from_url(self.source_url)
+                cadata = chaser.fetch_ca_chain_for_url(self.source_url)
                 with NamedTemporaryFile('w', delete=False) as pem_file:
                     logger.info('creating temp ca data file')
-                    pem_file.write(cadata)
+                    pem_file.write(certificates_to_pem(cadata))
                     pem_file.flush()
                     self.verify = pem_file.name
                     self.context = ssl.create_default_context(
                         cafile=self.verify
                     )
                     logger.info(f'pem file: {pem_file.name}')
+                    os.environ['SSL_CERT_FILE'] = pem_file.name
+                    logger.info(f"ssl cert: {os.environ['SSL_CERT_FILE']}")
             finally:
                 s.close()
         self.url_verified = True
