@@ -1,8 +1,10 @@
 name: update-urls
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 */6 * * *'
+# Disabling temporarily due to SSL errors with main url.
+# on:
+#   workflow_dispatch:
+#   schedule:
+#     - cron: '0 */6 * * *'
+on: workflow_dispatch
 
 jobs:
   update-urls:
