@@ -18,7 +18,7 @@ jobs:
     - name: Update URLs
       run: ./update-urls.sh
     - name: Run URL check script
-      uses: adriancoman/link-checks-action@1.0.1
+      uses: adriancoman/link-checks-action@1.0.2
       with:
         file-to-check: acestream_search/common/constants.py
     - name: Commit changes
