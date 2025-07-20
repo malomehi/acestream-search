@@ -1,10 +1,8 @@
 name: update-urls
-# Disabling temporarily due to SSL errors with main url.
-# on:
-#   workflow_dispatch:
-#   schedule:
-#     - cron: '0 */6 * * *'
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
 
 jobs:
   update-urls:
@@ -18,7 +16,7 @@ jobs:
     - name: Update URLs
       run: ./update-urls.sh
     - name: Run URL check script
-      uses: adriancoman/link-checks-action@1.0.2
+      uses: malomehi/link-checks-action@2.0.0
       with:
         file-to-check: acestream_search/common/constants.py
     - name: Commit changes
