@@ -11,7 +11,7 @@ jobs:
     outputs:
       files_with_url_changes_count: ${{ steps.check-changes.outputs.files_with_url_changes_count }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Get changed files
