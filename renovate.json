@@ -18,6 +18,11 @@
     {
       "matchUpdateTypes": ["major"],
       "addLabels": ["update-major"]
+    },
+    {
+      "matchPackageNames": ["certifi"],
+      "matchManagers": ["pip_requirements"],
+      "enabled": false
     }
   ],
   "vulnerabilityAlerts": {
