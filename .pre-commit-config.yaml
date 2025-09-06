@@ -1,7 +1,6 @@
 ci:
   skip: [
-    python-safety-dependencies-check,
-    renovate-config-validator
+    python-safety-dependencies-check
   ]
 
 repos:
