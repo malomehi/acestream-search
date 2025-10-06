@@ -1,5 +1,5 @@
 adb-shell==0.4.4
-aiohttp==3.12.15
+aiohttp==3.13.0
 bs4==0.0.2
 certifi==2025.1.31
 dnspython==2.8.0
