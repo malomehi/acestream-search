@@ -18,11 +18,11 @@ repos:
   - id: double-quote-string-fixer
   - id: requirements-txt-fixer
 - repo: https://github.com/asottile/reorder-python-imports
-  rev: v3.15.0
+  rev: v3.16.0
   hooks:
   - id: reorder-python-imports
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.20.0
+  rev: v3.21.0
   hooks:
   - id: pyupgrade
 - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
@@ -34,15 +34,15 @@ repos:
   hooks:
   - id: flake8
 - repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.34.0
+  rev: 0.34.1
   hooks:
     - id: check-github-workflows
       args: ['--verbose']
 - repo: https://github.com/rhysd/actionlint
-  rev: v1.7.7
+  rev: v1.7.8
   hooks:
     - id: actionlint
 - repo: https://github.com/renovatebot/pre-commit-hooks
-  rev: 41.137.2
+  rev: 41.146.8
   hooks:
     - id: renovate-config-validator
