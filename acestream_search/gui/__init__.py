@@ -78,7 +78,8 @@ class GuiApp():
 
     category_var = tk.StringVar()
     category_combobox = ttk.Combobox(
-        main_frame, textvariable=category_var, values=categories
+        main_frame, textvariable=category_var,
+        values=categories, state='readonly'
     )
     category_combobox.grid(row=2, column=1, sticky=tk.W)
     category_combobox.current(0)
@@ -152,6 +153,12 @@ class GuiApp():
             row=5, column=2, padx=5, sticky=(tk.W)
         )
         self.root.protocol('WM_DELETE_WINDOW', self.window_exit)
+        self.category_combobox.bind('<Return>', self.on_enter)
+        self.search_entry.bind('<Return>', self.on_enter)
+        self.hours_entry.bind('<Return>', self.on_enter)
+        self.show_empty_checkbox.bind('<Return>', self.on_enter)
+        self.category_combobox.bind('<Key>', self.combobox_jump_to_item)
+        self.category_combobox.focus()
 
     def discover_devices(self):
         self.refresh_adb_button.config(state=tk.DISABLED)
@@ -261,6 +268,41 @@ class GuiApp():
         # Enable the buttons after the search is finished
         self.search_events_button.config(state=tk.NORMAL)
         self.search_channels_button.config(state=tk.NORMAL)
+
+    def on_enter(self, event):
+        if str(self.search_events_button['state']) == tk.DISABLED or \
+           str(self.search_channels_button['state']) == tk.DISABLED:
+            logger.warning(
+                'Another search is already in progress. Try again later.'
+            )
+            return
+
+        self.start_search_events_thread()
+
+    def combobox_jump_to_item(self, event):
+        char = event.char.lower()
+
+        if not char.isalpha():
+            return
+
+        combo = event.widget
+        values = list(combo['values'])
+        current_idx = combo.current()
+
+        matching_indices = [
+            i for i, val in enumerate(values)
+            if str(val).lower().startswith(char)
+        ]
+
+        if not matching_indices:
+            return
+
+        next_indices = [i for i in matching_indices if i > current_idx]
+
+        if next_indices:
+            combo.current(next_indices[0])
+        else:
+            combo.current(matching_indices[0])
 
     def start_search_events_thread(self):
         threading.Thread(
