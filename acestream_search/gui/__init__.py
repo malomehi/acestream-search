@@ -153,10 +153,14 @@ class GuiApp():
             row=5, column=2, padx=5, sticky=(tk.W)
         )
         self.root.protocol('WM_DELETE_WINDOW', self.window_exit)
-        self.category_combobox.bind('<Return>', self.on_enter)
-        self.search_entry.bind('<Return>', self.on_enter)
-        self.hours_entry.bind('<Return>', self.on_enter)
-        self.show_empty_checkbox.bind('<Return>', self.on_enter)
+        for widget in [
+            self.category_combobox,
+            self.search_entry,
+            self.hours_entry,
+            self.show_empty_checkbox
+        ]:
+            for key in ['<Return>', '<KP_Enter>']:
+                widget.bind(key, self.on_enter)
         self.category_combobox.bind('<Key>', self.combobox_jump_to_item)
         self.category_combobox.focus()
 
