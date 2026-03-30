@@ -4,6 +4,6 @@ bs4==0.0.2
 dnspython==2.8.0
 portscan==1.1
 python-dateutil==2.9.0.post0
-requests==2.33.0
+requests==2.33.1
 tabulate==0.10.0
 tzdata==2025.3
