@@ -23,9 +23,82 @@ source_url = EVENTS_URL
 def switch_source_url():
     global source_url
 
-    source_url = ALTERNATIVE_EVENTS_URL
+    candidate_url = ALTERNATIVE_EVENTS_URL
     logger.warning(f'Not able to connect to main url: {EVENTS_URL}')
-    logger.info(f'Using alternative url: {ALTERNATIVE_EVENTS_URL}')
+
+    working_url = _validate_alternative_url(candidate_url)
+    if working_url:
+        source_url = working_url
+        logger.info(f'Using alternative url: {source_url}')
+        return
+
+    logger.warning(
+        f'Alternative url {candidate_url} is unavailable or returned 403/502. '
+        'Trying the next numeric alternatives.'
+    )
+    logger.warning(
+        'Please update the application to the latest '
+        'version to avoid this issue.'
+    )
+    incremented_url = _try_incremental_alternative_urls(candidate_url)
+    if incremented_url:
+        source_url = incremented_url
+        logger.info(f'Using alternative url: {source_url}')
+        return
+
+    source_url = candidate_url
+    logger.info(f'Using alternative url: {candidate_url}')
+
+
+def _normalize_url_base(url: str) -> str:
+    parsed = urlparse(url)
+    return f'{parsed.scheme}://{parsed.netloc}'
+
+
+def _is_valid_alternative_response(response):
+    if response.status_code != 200:
+        return False
+    if 'Error. Page cannot be displayed' in response.text:
+        return False
+
+    sop = BeautifulSoup(response.text, 'html.parser')
+    return bool(sop.find(name='a', attrs={'class': 'live'}))
+
+
+def _validate_alternative_url(url):
+    try:
+        response = requests.get(
+            f'{url}/enx/', timeout=3, allow_redirects=True
+        )
+        if _is_valid_alternative_response(response):
+            return _normalize_url_base(response.url)
+        return None
+    except Exception:
+        return None
+
+
+def _try_incremental_alternative_urls(url, max_retries=20):
+    match = re.match(r'^(https?://)([a-zA-Z]+)(\d+)(\..+)$', url)
+    if not match:
+        return None
+
+    protocol, base_name, number, extension = match.groups()
+    number = int(number)
+
+    for retry in range(1, max_retries + 1):
+        candidate_url = f'{protocol}{base_name}{number + retry}{extension}'
+        try:
+            response = requests.get(
+                f'{candidate_url}/enx/',
+                timeout=3,
+                allow_redirects=True
+            )
+            if _is_valid_alternative_response(response):
+                return _normalize_url_base(response.url)
+        except Exception:
+            continue
+
+    return None
 
 
 def get_events_timezone():

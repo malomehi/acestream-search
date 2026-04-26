@@ -68,8 +68,8 @@ do
     status_code=$(curl --silent --head --output /dev/null --write-out '%{http_code}' $url)
     echo "Status code for '$url': $status_code"
 
-    if [ $status_code -eq 403 ]; then
-        echo "Received 403 Forbidden, attempting incremental URL search..."
+    if [ $status_code -eq 403 ] || [ $status_code -eq 502 ]; then
+        echo "Received $status_code, attempting incremental URL search..."
         try_incremental_urls "$url"
     elif [ $status_code -eq 301 ]; then
         redirect_url=$(curl --silent --head --output /dev/null --write-out '%{redirect_url}' $url | head -c-1)
