@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-MAX_RETRIES=5
+MAX_RETRIES=10
 
 regex='https\?://[a-zA-Z0-9./?=_&-]\+'
 urls=$(grep -o "$regex" acestream_search/common/constants.py)
@@ -68,7 +68,7 @@ do
     status_code=$(curl --silent --head --output /dev/null --write-out '%{http_code}' $url)
     echo "Status code for '$url': $status_code"
 
-    if [ $status_code -eq 403 ] || [ $status_code -eq 502 ]; then
+    if [ $status_code -eq 403 ] || [ $status_code -eq 404 ] || [ $status_code -eq 502 ]; then
         echo "Received $status_code, attempting incremental URL search..."
         try_incremental_urls "$url"
     elif [ $status_code -eq 301 ]; then
