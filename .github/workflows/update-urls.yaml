@@ -16,7 +16,7 @@ jobs:
     - name: Update URLs
       run: ./update-urls.sh
     - name: Run URL check script
-      uses: malomehi/link-checks-action@2.0.0
+      uses: malomehi/link-checks-action@2.0.1
       with:
         file-to-check: acestream_search/common/constants.py
     - name: Commit changes
